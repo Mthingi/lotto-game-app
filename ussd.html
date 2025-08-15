@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simulated USSD Lotto</title>
+  <link rel="stylesheet" href="ussd.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Enter USSD Code</h2>
+    <input type="text" id="ussd-code" placeholder="*127*5543#">
+    <button onclick="startUSSD()">Submit</button>
+
+    <div id="ussd-menu" class="hidden">
+      <h3>USSD Menu</h3>
+      <div id="menu-content"></div>
+    </div>
+  </div>
+  <script src="ussd.js"></script>
+</body>
+</html>
+
