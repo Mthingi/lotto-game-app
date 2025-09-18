@@ -1,1 +1,0 @@
-# lotto-game-app
