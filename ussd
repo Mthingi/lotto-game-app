@@ -1,0 +1,73 @@
+@app.route("/ussd", methods=["POST"])
+def ussd():
+    session_id = request.form.get("sessionId")
+    phone = request.form.get("phoneNumber")
+    text = request.form.get("text", "")
+
+    inputs = text.split("*") if text else []
+    level = len(inputs)
+
+    if level == 0:
+        response = (
+            "CON Welcome to My Phanda Game\n"
+            "1. Lotto & Lotto Plus\n"
+            "2. PowerBall\n"
+            "3. Daily Lotto"
+        )
+
+    elif level == 1:
+        if inputs[0] == "1":
+            response = (
+                "CON Lotto Games\n"
+                "1. Lotto\n"
+                "2. Lotto Plus 1\n"
+                "3. Lotto Plus 2"
+            )
+        elif inputs[0] == "2":
+            response = (
+                "CON PowerBall Games\n"
+                "1. PowerBall\n"
+                "2. PowerBall Plus"
+            )
+        elif inputs[0] == "3":
+            response = "CON Enter 5 numbers (1–49) separated by space"
+        else:
+            response = "END Invalid option"
+
+    elif level == 2:
+        game_map = {
+            "1*1": "LOTTO",
+            "1*2": "LOTTO_PLUS",
+            "1*3": "LOTTO_PLUS_2",
+            "2*1": "POWERBALL",
+            "2*2": "POWERBALL_PLUS",
+        }
+
+        key = f"{inputs[0]}*{inputs[1]}"
+        game = game_map.get(key)
+
+        if not game:
+            response = "END Invalid selection"
+        elif not is_game_available(game):
+            response = f"END {game.replace('_', ' ')} is not available today."
+        else:
+            response = "CON Enter your numbers (space separated)"
+
+    elif level == 3:
+        response = (
+            "CON Confirm entry\n"
+            "1. Confirm\n"
+            "2. Cancel"
+        )
+
+    elif level == 4:
+        if inputs[-1] == "1":
+            # SAVE TO FIREBASE HERE
+            response = "END Entry successful. Good luck!"
+        else:
+            response = "END Entry cancelled"
+
+    else:
+        response = "END Session ended"
+
+    return response
