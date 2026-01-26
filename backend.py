@@ -1,65 +1,75 @@
 import os
 import json
 import random
-from datetime import datetime
+import uuid
+from datetime import datetime, timedelta
 
+from flask import Flask, request
 import firebase_admin
 from firebase_admin import credentials, firestore
-from flask import Flask, request
 
-# =========================
-# DRAW DAYS (SA LOTTO RULES)
-# =========================
-DRAW_DAYS = {
-    "LOTTO": ["Wednesday", "Saturday"],
-    "LOTTO_PLUS": ["Wednesday", "Saturday"],
-    "LOTTO_PLUS_2": ["Wednesday", "Saturday"],
-    "POWERBALL": ["Tuesday", "Friday"],
-    "POWERBALL_PLUS": ["Tuesday", "Friday"],
-    "DAILY_LOTTO": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-}
-
-def today_name():
-    return datetime.now().strftime("%A")
-
-def is_game_available(game_key):
-    return today_name() in DRAW_DAYS.get(game_key, [])
-
-# =========================
-# FLASK APP
-# =========================
+# =============================
+# Flask App
+# =============================
 app = Flask(__name__)
 
-# =========================
-# FIREBASE INIT (RENDER SAFE)
-# =========================
-db = None
+# =============================
+# Draw Days (SA Rules)
+# =============================
+DRAW_DAYS = {
+    "LOTTO": [2, 5],          # Wed, Sat
+    "LOTTO_PLUS": [2, 5],
+    "LOTTO_PLUS_2": [2, 5],
+    "POWERBALL": [1, 4],      # Tue, Fri
+    "POWERBALL_PLUS": [1, 4],
+    "DAILY_LOTTO": [0, 1, 2, 3, 4, 5, 6]
+}
 
+# =============================
+# Firebase Init (ENV SAFE)
+# =============================
+db = None
 try:
     firebase_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
-    if not firebase_json:
-        raise ValueError("FIREBASE_SERVICE_ACCOUNT_JSON not set")
-
-    cred_dict = json.loads(firebase_json)
-
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app(credentials.Certificate(cred_dict))
-
-    db = firestore.client()
-    print("✅ Firebase connected")
-
+    if firebase_json:
+        cred = credentials.Certificate(json.loads(firebase_json))
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(cred)
+        db = firestore.client()
+        print("✅ Firebase connected")
+    else:
+        print("⚠ Firebase env not set (local mode)")
 except Exception as e:
     print(f"❌ Firebase init failed: {e}")
 
-# =========================
-# COLLECTIONS
-# =========================
-tickets_ref = db.collection("lotto_tickets") if db else None
-results_ref = db.collection("lotto_results") if db else None
+tickets_ref = db.collection("tickets") if db else None
+results_ref = db.collection("results") if db else None
 
-# =========================
-# PRIZES (DEMO VALUES)
-# =========================
+# =============================
+# Helpers
+# =============================
+def next_draw_date(game):
+    today = datetime.utcnow()
+    for i in range(1, 8):
+        d = today + timedelta(days=i)
+        if d.weekday() in DRAW_DAYS[game]:
+            return d
+    return today
+
+def generate_numbers(game):
+    if "POWERBALL" in game:
+        return {
+            "main": sorted(random.sample(range(1, 51), 5)),
+            "powerball": random.randint(1, 20)
+        }
+    return sorted(random.sample(range(1, 60), 6))
+
+def generate_receipt():
+    return f"MPG-{uuid.uuid4().hex[:10].upper()}"
+
+# =============================
+# WIN CHECK HELPERS (STEP 2)
+# =============================
 PRIZES = {
     6: 1_000_000,
     5: 5_000,
@@ -67,24 +77,18 @@ PRIZES = {
     3: 50
 }
 
-# =========================
-# HELPERS
-# =========================
-def generate_numbers():
-    return sorted(random.sample(range(1, 60), 6))
+def calculate_matches(board, winning_numbers):
+    return len(set(board) & set(winning_numbers))
 
-def valid_numbers(nums):
-    return len(nums) == 6 and all(n.isdigit() and 1 <= int(n) <= 59 for n in nums)
-
-def calculate_winnings(ticket, winning):
-    matches = len(set(ticket) & set(winning))
+def calculate_board_win(board, winning_numbers):
+    matches = calculate_matches(board, winning_numbers)
     return PRIZES.get(matches, 0), matches
 
-def get_latest_results(game):
+def get_latest_result(game):
     if not results_ref:
-        return None, None
+        return None
 
-    query = (
+    docs = (
         results_ref
         .where("game", "==", game)
         .order_by("draw_date", direction=firestore.Query.DESCENDING)
@@ -92,24 +96,54 @@ def get_latest_results(game):
         .stream()
     )
 
-    for doc in query:
-        data = doc.to_dict()
-        return data["numbers"], data["draw_date"]
+    for d in docs:
+        return d.to_dict()
 
-    numbers = generate_numbers()
-    draw_date = datetime.utcnow()
+    return None
 
-    results_ref.add({
-        "game": game,
-        "numbers": numbers,
-        "draw_date": draw_date
-    })
+def process_draw_results(game):
+    result = get_latest_result(game)
+    if not result:
+        return
 
-    return numbers, draw_date
+    winning_numbers = result["numbers"]
+    draw_date = result["draw_date"]
 
-# =========================
-# USSD ENDPOINT
-# =========================
+    receipts = (
+        tickets_ref
+        .where("game", "==", game)
+        .where("status", "==", "PLAYED")
+        .stream()
+    )
+
+    for receipt in receipts:
+        data = receipt.to_dict()
+
+        if data["draw_date"] > draw_date:
+            continue
+
+        total_win = 0
+        breakdown = []
+
+        for board in data["boards"]:
+            win, matches = calculate_board_win(board, winning_numbers)
+            breakdown.append({
+                "numbers": board,
+                "matches": matches,
+                "win": win
+            })
+            total_win += win
+
+        receipt.reference.update({
+            "status": "WON" if total_win > 0 else "LOST",
+            "total_winnings": total_win,
+            "breakdown": breakdown,
+            "checked_at": firestore.SERVER_TIMESTAMP
+        })
+
+# =============================
+# USSD Endpoint
+# =============================
 @app.route("/ussd", methods=["POST"])
 def ussd():
     phone = request.form.get("phoneNumber")
@@ -120,19 +154,18 @@ def ussd():
     if not parts or parts[0] == "":
         return (
             "CON My Phanda Game\n"
-            "1. Play Lotto Games\n"
-            "2. My Tickets\n"
-            "3. View Results\n"
-            "4. Withdraw Winnings"
+            "1. Play Lotto\n"
+            "2. My Receipts\n"
+            "3. Results"
         )
 
-    # =====================
-    # PLAY MENU
-    # =====================
+    # =============================
+    # PLAY LOTTO
+    # =============================
     if parts[0] == "1":
         if len(parts) == 1:
             return (
-                "CON Choose Game\n"
+                "CON Select Game\n"
                 "1. Lotto\n"
                 "2. Lotto Plus\n"
                 "3. Lotto Plus 2\n"
@@ -154,96 +187,80 @@ def ussd():
         if not game:
             return "END Invalid game"
 
-        if not is_game_available(game):
-            return f"END {game.replace('_', ' ')} not available today"
-
         if len(parts) == 2:
-            return "CON Enter 6 numbers\nExample: 1*2*3*4*5*6"
+            return "CON How many boards? (1-5)"
 
-        if not db:
-            return "END System offline"
+        try:
+            boards_count = int(parts[2])
+        except:
+            return "END Invalid input"
 
-        nums = parts[2:]
-        if not valid_numbers(nums):
-            return "END Invalid numbers (1–59)"
+        if boards_count < 1 or boards_count > 5:
+            return "END Max 5 boards allowed"
 
-        tickets_ref.add({
+        boards = [generate_numbers(game) for _ in range(boards_count)]
+        receipt_id = generate_receipt()
+        draw_date = next_draw_date(game)
+
+        ticket = {
+            "receipt_id": receipt_id,
             "phone": phone,
             "game": game,
-            "numbers": sorted(map(int, nums)),
-            "timestamp": firestore.SERVER_TIMESTAMP,
-            "cashed_out": False
-        })
+            "boards": boards,
+            "draw_date": draw_date,
+            "status": "PLAYED",
+            "created_at": firestore.SERVER_TIMESTAMP,
+            "sms_confirmation": (
+                f"My Phanda Game\n"
+                f"Receipt: {receipt_id}\n"
+                f"Game: {game.replace('_',' ')}\n"
+                f"Boards: {boards_count}\n"
+                f"Draw: {draw_date.strftime('%Y-%m-%d')}"
+            )
+        }
 
-        return f"END {game.replace('_',' ')} ticket saved"
+        if db:
+            tickets_ref.add(ticket)
 
-    # =====================
-    # MY TICKETS
-    # =====================
+        return (
+            "END Play confirmed!\n"
+            f"Receipt: {receipt_id}\n"
+            f"Draw: {draw_date.strftime('%Y-%m-%d')}\n"
+            "SMS confirmation sent"
+        )
+
+    # =============================
+    # VIEW RECEIPTS
+    # =============================
     if parts[0] == "2":
         if not db:
-            return "END System offline"
+            return "END Service unavailable"
 
-        query = (
+        docs = (
             tickets_ref
             .where("phone", "==", phone)
-            .order_by("timestamp", direction=firestore.Query.DESCENDING)
-            .limit(5)
+            .order_by("created_at", direction=firestore.Query.DESCENDING)
+            .limit(3)
             .stream()
         )
 
         lines = []
-        for t in query:
-            d = t.to_dict()
-            nums = ", ".join(map(str, d["numbers"]))
-            lines.append(f"{d['game']}: {nums}")
+        for d in docs:
+            t = d.to_dict()
+            lines.append(f"{t['game']} | {t['receipt_id']} | {t['status']}")
 
-        return "END No tickets found" if not lines else "END Your Tickets:\n" + "\n".join(lines)
+        return "END No plays found" if not lines else "END Receipts:\n" + "\n".join(lines)
 
-    # =====================
+    # =============================
     # RESULTS
-    # =====================
+    # =============================
     if parts[0] == "3":
-        return (
-            "CON Results\n"
-            "1. Lotto\n"
-            "2. PowerBall\n"
-            "3. Daily Lotto"
-        )
-
-    # =====================
-    # WITHDRAW
-    # =====================
-    if parts[0] == "4":
-        if not db:
-            return "END System offline"
-
-        total = 0
-
-        tickets = (
-            tickets_ref
-            .where("phone", "==", phone)
-            .where("cashed_out", "==", False)
-            .stream()
-        )
-
-        for t in tickets:
-            d = t.to_dict()
-            winning, _ = get_latest_results(d["game"])
-            if not winning:
-                continue
-
-            win, _ = calculate_winnings(d["numbers"], winning)
-            if win > 0:
-                total += win
-                t.reference.update({"cashed_out": True})
-
-        return f"END Withdrawn R{total:.2f}" if total > 0 else "END No winnings yet"
+        return "END Results checked automatically after official draw"
 
     return "END Invalid option"
 
-# =========================
-# RUN
-# =========================
+# =============================
+# Run App
+# =============================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
