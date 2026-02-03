@@ -3,41 +3,39 @@ def ussd():
     phone = request.form.get("phoneNumber", "")
     raw_text = request.form.get("text", "").strip()
 
-    # ---- Normalize Africa's Talking quirks ----
+    # Normalize Africa's Talking quirks
     raw_text = raw_text.replace("##", "").rstrip("*")
     parts = raw_text.split("*") if raw_text else []
-
-    print("USSD INPUT:", parts)  # TEMP DEBUG (remove later)
 
     # =============================
     # MAIN MENU
     # =============================
     if len(parts) == 0:
-        response = (
+        return Response(
             "CON My Phanda Game\n"
             "1. Play Lotto\n"
             "2. My Receipts\n"
-            "3. Results"
+            "3. Results",
+            mimetype="text/plain"
         )
-        return Response(response, mimetype="text/plain")
 
     # =============================
     # PLAY LOTTO
     # =============================
     if parts[0] == "1":
 
-        # Select game
+        # Step 1: Select game
         if len(parts) == 1:
-            response = (
+            return Response(
                 "CON Select Game\n"
                 "1. Lotto\n"
                 "2. Lotto Plus\n"
                 "3. Lotto Plus 2\n"
                 "4. PowerBall\n"
                 "5. PowerBall Plus\n"
-                "6. Daily Lotto"
+                "6. Daily Lotto",
+                mimetype="text/plain"
             )
-            return Response(response, mimetype="text/plain")
 
         game_map = {
             "1": "LOTTO",
@@ -52,31 +50,19 @@ def ussd():
         if not game:
             return Response("END Invalid game selection", mimetype="text/plain")
 
-        # Ask for number of boards
+        # Step 2: Ask for boards
         if len(parts) == 2:
             return Response(
                 "CON Enter number of boards (1-5)",
                 mimetype="text/plain"
             )
 
-        # =============================
-        # NUMBER OF BOARDS (FIXED)
-        # =============================
-        if len(parts) < 3:
-            return Response(
-                "CON Enter number of boards (1-5)",
-                mimetype="text/plain"
-            )
-
+        # Step 3: Validate boards
         try:
             boards_count = int(parts[2])
+            if boards_count < 1 or boards_count > 5:
+                raise ValueError
         except ValueError:
-            return Response(
-                "CON Enter number of boards (1-5)",
-                mimetype="text/plain"
-            )
-
-        if boards_count < 1 or boards_count > 5:
             return Response(
                 "CON Enter number of boards (1-5)",
                 mimetype="text/plain"
@@ -89,7 +75,7 @@ def ussd():
         receipt_id = generate_receipt()
         draw_date = next_draw_date(game)
 
-        # Save ticket (safe, non-blocking)
+        # Save ticket (non-blocking)
         if tickets_ref:
             try:
                 tickets_ref.add({
@@ -104,7 +90,7 @@ def ussd():
             except Exception as e:
                 print("Firebase error:", e)
 
-        # Send SMS (sandbox-safe)
+        # Send SMS (safe)
         if sms:
             try:
                 sms.send(
