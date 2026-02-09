@@ -1,3 +1,5 @@
 serviceAccount.json
 venv/
 .env
+firebase.json
+*.json
