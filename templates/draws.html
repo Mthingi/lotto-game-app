@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>MPG Draw Management</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+    padding:30px;
+}
+
+form{
+    display:inline;
+    margin:0;
+}
+
+h1{
+    color:#0b5d3b;
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    margin-top:20px;
+
+}
+
+th{
+
+    background:#0b5d3b;
+    color:white;
+    padding:12px;
+
+}
+
+td{
+
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+
+}
+
+button{
+
+    background:#0b5d3b;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#087247;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🎰 MPG Draw Management</h1>
+
+{% include '_navigation.html' %}
+
+<table>
+
+<tr>
+
+<th>Game</th>
+
+<th>Draw Date</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+{% for draw in draws %}
+
+<tr>
+
+<td>{{ draw.game }}</td>
+
+<td>{{ draw.draw_id }}</td>
+
+<td>
+{% if draw.processed %}
+✅ Processed
+{% else %}
+⏳ Pending
+{% endif %}
+</td>
+
+<td>
+
+<form action="/process/{{ draw.draw_id }}/{{ draw.game }}"
+      method="POST"
+      style="display:inline;">
+
+    <button type="submit">
+        ▶ Process Draw
+    </button>
+
+</form>
+
+<a href="/draw/{{ draw.draw_id }}/{{ draw.game }}">
+    <button type="button">
+        👁 View
+    </button>
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>

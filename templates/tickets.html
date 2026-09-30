@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<title>All MPG Tickets</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+padding:30px;
+}
+
+table{
+
+width:100%;
+background:white;
+border-collapse:collapse;
+
+}
+
+th,td{
+
+padding:12px;
+border:1px solid #ddd;
+text-align:center;
+
+}
+
+th{
+
+background:#0b5d3b;
+color:white;
+
+}
+
+a{
+
+text-decoration:none;
+color:#0b5d3b;
+font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>ðŸŽŸ All MPG Tickets</h1>
+
+<form method="GET">
+
+    <label for="search">Search</label>
+    <input
+        id="search"
+        type="text"
+        name="search"
+        placeholder="Search Reference, Phone or Game"
+        value="{{ search }}"
+    >
+
+    <label for="game">Game</label>
+    <select id="game" name="game">
+        <option value="" {% if not game_filter %}selected{% endif %}>All Games</option>
+        <option value="Lotto" {% if game_filter == "Lotto" %}selected{% endif %}>Lotto</option>
+        <option value="PowerBall" {% if game_filter == "PowerBall" %}selected{% endif %}>PowerBall</option>
+        <option value="Daily Lotto" {% if game_filter == "Daily Lotto" %}selected{% endif %}>Daily Lotto</option>
+    </select>
+
+    <label for="status">Status</label>
+    <select id="status" name="status">
+        <option value="" {% if not status_filter %}selected{% endif %}>All Status</option>
+        <option value="Pending" {% if status_filter == "Pending" %}selected{% endif %}>Pending</option>
+        <option value="Processed" {% if status_filter == "Processed" %}selected{% endif %}>Processed</option>
+    </select>
+
+    <label for="result">Result</label>
+    <select id="result" name="result">
+        <option value="" {% if not result_filter %}selected{% endif %}>All Results</option>
+        <option value="Winner" {% if result_filter == "Winner" %}selected{% endif %}>Winner</option>
+        <option value="Loser" {% if result_filter == "Loser" %}selected{% endif %}>Loser</option>
+    </select>
+
+    <label for="date">Date</label>
+    <input
+        id="date"
+        type="date"
+        name="date"
+        value="{{ date_filter }}"
+    >
+
+    <button type="submit">
+        Apply Filters
+    </button>
+
+    <a href="/tickets">
+        <button type="button">
+            Reset
+        </button>
+    </a>
+
+</form>
+<br>
+
+<div class="pagination-toolbar">
+
+    <div>
+
+        <strong>Total Tickets:</strong>
+
+        {{ total_tickets }}
+
+    </div>
+
+    <div>
+
+        Show
+
+        <select
+            onchange="window.location='?page=1&per_page='+this.value+'&search={{ search }}&game={{ game_filter }}&status={{ status_filter }}&result={{ result_filter }}&date={{ date_filter }}'">
+
+            <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+
+            <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+
+            <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+
+        </select>
+
+        tickets
+
+    </div>
+
+</div>
+
+<br>
+
+<table>
+
+<tr>
+
+<th>Reference</th>
+<th>Game</th>
+<th>Status</th>
+<th>Prize</th>
+
+</tr>
+
+{% for ticket in tickets %}
+
+<tr>
+
+<td>{{ ticket.reference }}</td>
+
+<td>{{ ticket.game }}</td>
+
+<td>
+
+{% if ticket.won %}
+
+Winner ðŸŽ‰
+
+{% elif ticket.result_checked %}
+
+Lost
+
+{% else %}
+
+Pending
+
+{% endif %}
+
+</td>
+
+<td>R{{ ticket.winnings }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<br><br>
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+    <div>
+        {% if has_previous %}
+            <a href="?page={{ previous_page }}&per_page={{ per_page }}&search={{ search }}&game={{ game_filter }}&status={{ status_filter }}&result={{ result_filter }}&date={{ date_filter }}">
+                â¬… Previous
+            </a>
+        {% endif %}
+    </div>
+
+    <div>
+        <strong>Page {{ page }} of {{ total_pages }}</strong>
+    </div>
+
+    <div>
+        {% if has_next %}
+            <div style="margin-top:20px; text-align:center;">
+
+    {% if page > 1 %}
+    <a href="/tickets?page={{ page-1 }}&per_page={{ per_page }}&search={{ search }}&game={{ game_filter }}&status={{ status_filter }}&result={{ result_filter }}&date={{ date_filter }}">
+        â¬… Previous
+    </a>
+    {% endif %}
+
+    <strong>
+        Page {{ page }} of {{ total_pages }}
+    </strong>
+
+    {% if page < total_pages %}
+    <a href="/tickets?page={{ page+1 }}&per_page={{ per_page }}&search={{ search }}&game={{ game_filter }}&status={{ status_filter }}&result={{ result_filter }}&date={{ date_filter }}">
+        Next âž¡
+    </a>
+    {% endif %}
+
+</div>
+        {% endif %}
+    </div>
+
+</div>
+
+{% include '_navigation.html' %}
+
+</body>
+</html>

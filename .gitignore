@@ -3,3 +3,4 @@ venv/
 .env
 firebase.json
 *.json
+__pycache__/

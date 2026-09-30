@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>MPG Winners</title>
+
+<style>
+
+body{
+
+    font-family:Arial;
+    background:#f4f4f4;
+    margin:30px;
+
+}
+
+h1{
+
+    color:#0b5d3b;
+    text-align:center;
+
+}
+
+table{
+
+    width:100%;
+    background:white;
+    border-collapse:collapse;
+
+}
+
+th{
+
+    background:#0b5d3b;
+    color:white;
+    padding:12px;
+
+}
+
+td{
+
+    padding:10px;
+    border-bottom:1px solid #ddd;
+
+}
+
+button{
+
+    background:#0b5d3b;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#087247;
+
+}
+
+.paid{
+
+    color:green;
+    font-weight:bold;
+
+}
+
+.unpaid{
+
+    color:red;
+    font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🏆 MPG Winners Management</h1>
+
+<p>
+
+<a href="/admin">
+<button>🏠 Dashboard</button>
+</a>
+
+<a href="/tickets">
+<button>🎟 Tickets</button>
+</a>
+
+</p>
+
+<table>
+
+<tr>
+
+<th>Reference</th>
+<th>Game</th>
+<th>Phone</th>
+<th>Prize</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+{% for ticket in winners %}
+
+<tr>
+
+<td>{{ ticket.reference }}</td>
+
+<td>{{ ticket.game }}</td>
+
+<td>{{ ticket.phone }}</td>
+
+<td>R{{ ticket.winnings }}</td>
+
+<td>
+
+{% if ticket.payment_status == "SETTLED" %}
+
+<span class="paid">
+✅ Settled
+</span>
+
+{% else %}
+
+<span class="unpaid">
+Awaiting Settlement
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+—
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>

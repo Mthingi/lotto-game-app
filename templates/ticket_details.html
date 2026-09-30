@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MPG Ticket Details</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 style="color:red;">
+    🚨 THIS IS THE TEMPLATE I AM EDITING
+    </h1>
+
+    <div class="top-links">
+        <a href="{{ url_for('customer_profile', phone=ticket.phone) }}">
+            ⬅ Back to Customer
+        </a>
+    </div>
+
+    <!-- Ticket Header -->
+
+    <div class="ticket-header">
+
+    <div class="ticket-reference">
+
+        {% if ticket.won %}
+
+<div class="winner-banner">
+🏆 Congratulations! You won R{{ ticket.winnings }}
+</div>
+
+{% elif ticket.result_checked %}
+
+<div class="loser-banner">
+❌ Better Luck Next Time
+</div>
+
+{% else %}
+
+<div class="pending-banner">
+🟦 Waiting for Draw
+</div>
+
+{% endif %}
+
+<div class="numbers">
+
+<h2>📈 Ticket Progress</h2>
+
+<div class="progress">
+
+<div class="progress-fill"></div>
+
+</div>
+
+<p>
+
+🟢 Ticket Created
+
+<br>
+
+🟢 Validation Complete
+
+<br>
+
+🟢 Saved to Database
+
+<br>
+
+{% if ticket.result_checked %}
+
+🟢 Results Processed
+
+{% else %}
+
+🟡 Waiting for Draw
+
+{% endif %}
+
+<br>
+
+{% if ticket.sms_sent %}
+
+🟢 SMS Sent
+
+{% else %}
+
+🟡 Awaiting SMS
+
+{% endif %}
+
+</p>
+
+</div>
+
+        <small>Ticket Reference</small>
+
+        <h2>{{ ticket.reference }}</h2>
+
+        <h3>{{ ticket.game }}</h3>
+
+    </div>
+
+        <div>
+
+            {% if ticket.won %}
+                <span class="status winner">🏆 WINNER</span>
+
+            {% elif ticket.result_checked %}
+                <span class="status lost">❌ LOST</span>
+
+            {% elif ticket.status == "ACTIVE" %}
+                <span class="status active">🔵 ACTIVE</span>
+
+            {% elif ticket.status == "PENDING" %}
+                <span class="status pending">🟡 PENDING</span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Information Cards -->
+
+    <!-- Ticket Summary -->
+
+    <div class="ticket-summary">
+
+    <div class="summary-item">
+        <span class="summary-label">🎮 Game</span>
+        <span class="summary-value">{{ ticket.game }}</span>
+    </div>
+
+    <div class="summary-item">
+        <span class="summary-label">🎲 Matches</span>
+        <span class="summary-value">{{ ticket.matches }}</span>
+    </div>
+
+    <div class="summary-item">
+        <span class="summary-label">🏆 Prize</span>
+        <span class="summary-value">R{{ ticket.winnings }}</span>
+    </div>
+
+    <div class="summary-item">
+        <span class="summary-label">📅 Played</span>
+        <span class="summary-value">{{ ticket.played_at }}</span>
+    </div>
+
+    </div>
+
+
+    <!-- Draw Information -->
+
+<div class="numbers">
+
+    <h2>🎯 Draw Information</h2>
+
+    <table class="status-table">
+
+        <tr>
+            <td><strong>Draw ID</strong></td>
+            <td>{{ ticket.draw_id }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Game</strong></td>
+            <td>{{ ticket.game }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Scheduled Draw</strong></td>
+            <td>{{ ticket.draw }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Draw Status</strong></td>
+
+            <td>
+
+                {% if not ticket.result_checked %}
+
+                    🟦 Waiting for Draw
+
+                {% elif ticket.won %}
+
+                    🏆 Winning Ticket
+
+                {% else %}
+
+                    ✅ Draw Completed
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+    </table>
+
+</div>
+
+
+    <!-- Ticket Status -->
+
+<div class="numbers">
+
+<h2>📋 Ticket Status</h2>
+
+<table class="status-table">
+
+<tr>
+<td>🎟 Ticket Created</td>
+<td><span class="badge success">Completed</span></td>
+</tr>
+
+<tr>
+<td>💾 Saved to Database</td>
+<td><span class="badge success">Completed</span></td>
+</tr>
+
+<tr>
+<td>🎯 Result Checked</td>
+<td><span class="badge success">Completed</span></td>
+</tr>
+
+<tr>
+
+<td>Settlement Status</td>
+
+<td>
+
+{% if ticket.won %}
+
+<span class="badge pending">
+
+{{ ticket.payment_status or "PENDING" }}
+
+</span>
+
+{% elif ticket.result_checked %}
+
+<span class="badge">
+
+NOT APPLICABLE
+
+</span>
+
+{% else %}
+
+<span class="badge pending">
+
+PENDING
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+</table>
+
+</div>    
+
+    </div>
+
+</div>
+
+    <!-- Selected Numbers -->
+
+    <div class="numbers">
+
+        <h2>🎱 Selected Numbers</h2>
+
+        {% for number in ticket.numbers.split(",") %}
+
+            {% if number.strip() in ticket.matched_numbers %}
+                <span class="ball matched">
+                    {{ number.strip() }}
+                </span>
+            {% else %}
+                <span class="ball">
+                    {{ number.strip() }}
+                </span>
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+    <div class="numbers">
+
+    <h2 style="background:red;color:white;">
+        THIS IS THE ONLY WINNING NUMBERS SECTION
+    </h2>
+
+    {% if ticket.draw_numbers %}
+
+        {% for number in ticket.draw_numbers %}
+
+            <span class="ball winner">
+                {{ number.strip() }}
+            </span>
+
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+
+    <!-- Matched Numbers -->
+
+    <div class="numbers">
+
+        <h2>✅ Matched Numbers</h2>
+
+        {% if ticket.matched_numbers %}
+
+            {% for number in ticket.matched_numbers %}
+                <span class="ball matched">
+                    {{ number }}
+                </span>
+            {% endfor %}
+
+        {% elif ticket.matches %}
+
+            <p>{{ ticket.matches }} matching numbers recorded.</p>
+
+        {% else %}
+
+            <p>No matched numbers.</p>
+
+        {% endif %}
+
+    </div>
+
+    <!-- Operator Actions -->
+
+<div class="actions">
+
+    <a href="{{ url_for('customer_profile', phone=ticket.phone) }}" class="btn">
+        👤 Customer Profile
+    </a>
+
+    <a href="{{ url_for('customers') }}" class="btn">
+        👥 Customers
+    </a>
+
+    <a href="{{ url_for('tickets') }}" class="btn">
+        🎟 Ticket Centre
+    </a>
+
+    <button class="btn" onclick="window.print()">
+        🖨 Print Ticket
+    </button>
+
+</div>
+
+    <div class="numbers">
+
+<h2>📝 Activity Timeline</h2>
+
+<div class="timeline">
+
+    <div class="timeline-item success">
+
+    <strong>{{ ticket.played_at }}</strong>
+
+    •
+
+    Ticket Created
+
+    </div>
+
+    <div class="timeline-item success">
+
+    <strong>{{ ticket.played_at }}</strong>
+
+    •
+
+    Saved to Firestore
+
+    </div>
+
+    <div class="timeline-item success">
+
+    <strong>
+
+    {{ ticket.processed_at or "Processed" }}
+
+    </strong>
+
+    •
+
+    Draw Results Checked
+
+    </div>
+
+    <div class="timeline-item success">
+
+    <strong>
+
+    {{ ticket.processed_at or "Processed" }}
+
+    </strong>
+
+    •
+
+    Prize Calculated
+
+    </div>
+
+    {% if ticket.sms_sent %}
+
+<div class="timeline-item success">
+
+<strong>{{ ticket.processed_at }}</strong>
+
+•
+
+SMS Notification Sent
+
+</div>
+
+{% else %}
+
+<div class="timeline-item pending">
+
+<strong>Pending</strong>
+
+•
+
+SMS Notification
+
+</div>
+
+{% endif %}
+
+</div>
+
+<div class="numbers">
+
+<h2>📝 Operator Notes</h2>
+
+<p>
+
+No operational notes have been recorded for this ticket.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="numbers">
+
+<h2>🔒 Ticket Integrity</h2>
+
+<table>
+
+<tr>
+    <td>Reference Valid</td>
+    <td>✅ Verified</td>
+</tr>
+
+<tr>
+    <td>Stored in Database</td>
+    <td>✅ Verified</td>
+</tr>
+
+<tr>
+    <td>Duplicate Ticket</td>
+    <td>✅ None Detected</td>
+</tr>
+
+<tr>
+    <td>Fraud Screening</td>
+    <td>✅ Passed</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="numbers">
+
+<h2>👤 Customer Snapshot</h2>
+
+<table>
+
+<tr>
+<td><strong>Phone Number</strong></td>
+<td>{{ customer.phone }}</td>
+</tr>
+
+<tr>
+<td><strong>Total Tickets</strong></td>
+<td>{{ customer.total_tickets }}</td>
+</tr>
+
+<tr>
+<td><strong>Total Spent</strong></td>
+<td>R{{ "{:,}".format(customer.total_spent) }}</td>
+</tr>
+
+<tr>
+<td><strong>Total Wins</strong></td>
+<td>{{ customer.total_wins }}</td>
+</tr>
+
+<tr>
+<td><strong>Total Prize Value</strong></td>
+<td>R{{ "{:,}".format(customer.total_winnings) }}</td>
+</tr>
+
+<tr>
+<td><strong>Win Rate</strong></td>
+<td>{{ customer.win_rate }}%</td>
+</tr>
+
+<tr>
+<td><strong>Ticket Cost</strong></td>
+<td>R{{ ticket.cost }}</td>
+</tr>
+
+<tr>
+<td><strong>Prize Won</strong></td>
+<td>R{{ ticket.winnings }}</td>
+</tr>
+
+<tr>
+<td><strong>Settlement Status</strong></td>
+<td>
+
+{% if ticket.won %}
+
+{{ ticket.payment_status }}
+
+{% else %}
+
+Not Applicable
+
+{% endif %}
+
+</td>
+</tr>
+
+<tr>
+<td><strong>Operator</strong></td>
+<td>MPG Lottery</td>
+</tr>
+
+<tr>
+<td><strong>Last Played</strong></td>
+<td>{{ customer.last_played }}</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="numbers">
+
+<h2>💰 Settlement Summary</h2>
+
+<table>
+
+<tr>
+
+<td><strong>Ticket Cost</strong></td>
+
+<td>R{{ ticket.cost }}</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Prize Won</strong></td>
+
+<td>R{{ "{:,}".format(ticket.winnings) }}</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Settlement Status</strong></td>
+
+<td>
+
+{% if ticket.won %}
+
+{{ ticket.payment_status or "PENDING" }}
+
+{% else %}
+
+NOT APPLICABLE
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Operator</strong></td>
+
+<td>MPG Lottery</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="numbers">
+
+<h2>📊 Processing Summary</h2>
+
+<table>
+
+<tr>
+
+<td><strong>Ticket Lifecycle</strong></td>
+
+<td>
+
+{% if ticket.result_checked %}
+
+Completed
+
+{% else %}
+
+Processing
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Validation</strong></td>
+
+<td>
+
+<span class="badge success">
+
+Successful
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Prize Evaluation</strong></td>
+
+<td>
+
+{% if ticket.result_checked %}
+
+Completed
+
+{% else %}
+
+Pending
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Current Queue</strong></td>
+
+<td>
+
+{% if not ticket.result_checked %}
+
+Waiting For Draw
+
+{% elif ticket.won and ticket.payment_status != "SETTLED" %}
+
+Awaiting Sizekhaya Settlement
+
+{% elif ticket.won and ticket.payment_status == "SETTLED" %}
+
+Completed
+
+{% else %}
+
+Completed
+
+{% endif %}
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<hr>
+
+<div class="numbers">
+
+<h2>⚙ Ticket Metadata</h2>
+
+<table>
+
+<tr>
+<td><strong>Database ID</strong></td>
+<td>{{ ticket.reference }}</td>
+</tr>
+
+<tr>
+<td><strong>Settlement Status</strong></td>
+<td>
+
+{% if ticket.won %}
+
+{{ ticket.payment_status }}
+
+{% else %}
+
+NOT APPLICABLE
+
+{% endif %}
+
+</td>
+</tr>
+
+<tr>
+<td><strong>Result Checked</strong></td>
+<td>
+
+{% if ticket.result_checked %}
+
+Yes
+
+{% else %}
+
+No
+
+{% endif %}
+
+</td>
+</tr>
+
+<tr>
+<td><strong>Created By</strong></td>
+<td>USSD System</td>
+</tr>
+
+<tr>
+<td><strong>Reference</strong></td>
+<td>{{ ticket.reference }}</td>
+</tr>
+
+<tr>
+<td><strong>Draw ID</strong></td>
+<td>{{ ticket.draw_id }}</td>
+</tr>
+
+<tr>
+<td><strong>Source</strong></td>
+<td>USSD</td>
+</tr>
+
+<tr>
+
+<td><strong>SMS Status</strong></td>
+
+<td>
+
+{% if ticket.sms_sent %}
+
+Sent
+
+{% else %}
+
+Pending
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Processed At</strong></td>
+
+<td>
+
+{{ ticket.processed_at or "Not Recorded" }}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td><strong>Result</strong></td>
+
+<td>
+
+{% if ticket.won %}
+
+Winner
+
+{% elif ticket.result_checked %}
+
+Lost
+
+{% else %}
+
+Pending
+
+{% endif %}
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+<div class="numbers">
+
+<h2>⚡ Quick Actions</h2>
+
+<div class="quick-actions">
+
+<a href="{{ url_for('customer_profile', phone=ticket.phone) }}" class="action-btn">
+👤 Customer Profile
+</a>
+
+<a href="{{ url_for('customers') }}" class="action-btn">
+👥 Customers
+</a>
+
+<a href="{{ url_for('tickets') }}" class="action-btn">
+🎟 Ticket Centre
+</a>
+
+<a href="#" class="action-btn">
+🖨 Print Ticket
+</a>
+
+</div>
+
+
+</div>
+
+
+<div class="footer">
+
+<strong>MPG Lottery Operations Centre</strong><br>
+
+Ticket generated from the official MPG Operations System.<br>
+
+Version 1.0 • Internal Use Only
+
+</div>
+</body>
+</html>

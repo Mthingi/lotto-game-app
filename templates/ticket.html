@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>MPG Ticket Details</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎟 Ticket Details</h1>
+
+<div class="top-links">
+
+<a href="{{ url_for('admin') }}">🏠 Dashboard</a>
+
+<a href="{{ url_for('customers') }}">👥 Customers</a>
+
+</div>
+
+<div class="stats-grid">
+
+<div class="card">
+<h3>Reference</h3>
+<p>{{ ticket.reference }}</p>
+</div>
+
+<div class="card">
+<h3>Phone</h3>
+<p>{{ ticket.phone }}</p>
+</div>
+
+<div class="card">
+<h3>Game</h3>
+<p>{{ ticket.game }}</p>
+</div>
+
+<div class="card">
+<h3>Status</h3>
+
+{% if ticket.status=="WINNER" %}
+🟢 WINNER
+{% elif ticket.status=="LOST" %}
+🔴 LOST
+{% elif ticket.status=="ACTIVE" %}
+🔵 ACTIVE
+{% else %}
+🟡 PENDING
+{% endif %}
+
+</div>
+
+<div class="card">
+<h3>Prize</h3>
+<p>R{{ ticket.winnings }}</p>
+</div>
+
+<div class="card">
+<h3>Cost</h3>
+<p>R{{ ticket.cost }}</p>
+</div>
+
+<div class="card">
+<h3>Boards</h3>
+<p>{{ ticket.boards }}</p>
+</div>
+
+<div class="card">
+<h3>Played At</h3>
+<p>{{ ticket.played_at }}</p>
+</div>
+
+<div class="card">
+<h3>Draw</h3>
+<p>{{ ticket.draw }}</p>
+</div>
+
+</div>
+
+<h2>Numbers Played</h2>
+
+<div class="numbers">
+
+{{ ticket.numbers }}
+
+</div>
+
+<h2>Matched Numbers</h2>
+
+<div class="numbers">
+
+{{ ticket.matched }}
+
+</div>
+
+<br>
+
+<a href="{{ url_for('customer_profile', phone=ticket.phone) }}">
+
+⬅ Back to Customer
+
+</a>
+
+</div>
+
+</body>
+
+</html>

@@ -3,4 +3,4 @@ gunicorn==25.0.0
 requests==2.31.0
 firebase-admin==6.0.1
 python-dotenv==1.0.0
-africastalking==3.0.0
+africastalking==2.0.1

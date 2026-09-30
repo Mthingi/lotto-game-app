@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MPG Reports</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body{
+            font-family:Arial,sans-serif;
+            background:#f4f4f4;
+            margin:0;
+            padding:30px;
+        }
+
+        h1{
+            color:#0b5d3b;
+            margin-bottom:10px;
+        }
+
+        a{
+            text-decoration:none;
+        }
+
+        /* KPI Cards */
+
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:20px;
+            margin:30px 0;
+        }
+
+        .card{
+            background:white;
+            border-radius:12px;
+            padding:25px;
+            text-align:center;
+            box-shadow:0 2px 8px rgba(0,0,0,.15);
+            transition:.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 8px 20px rgba(0,0,0,.2);
+        }
+
+        .card h2{
+            margin:0;
+            color:#0b5d3b;
+            font-size:34px;
+        }
+
+        .card p{
+            color:#666;
+            margin-top:10px;
+        }
+
+        /* White sections */
+
+        .section{
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            margin-top:35px;
+            box-shadow:0 2px 8px rgba(0,0,0,.15);
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th,td{
+            border:1px solid #ddd;
+            padding:12px;
+            text-align:center;
+        }
+
+        th{
+            background:#0b5d3b;
+            color:white;
+        }
+
+        tr:nth-child(even){
+            background:#f9f9f9;
+        }
+
+        canvas{
+            width:100% !important;
+            height:450px !important;
+        }
+
+        button{
+
+            background:white;
+            color:#0b5d3b;
+            border:none;
+            padding:10px 20px;
+            border-radius:8px;
+            font-weight:bold;
+            cursor:pointer;
+            margin-right:10px;
+            transition:.3s;
+
+        }
+
+        button:hover{
+
+            background:#e9f7ef;
+            transform:translateY(-2px);
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div style="
+background:#0b5d3b;
+padding:25px;
+border-radius:15px;
+color:white;
+margin-bottom:30px;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+">
+
+<h1 style="margin:0;">
+📊 MPG Business Intelligence Dashboard
+</h1>
+
+<p style="margin-top:8px;font-size:17px;color:#d9f5e5;">
+Real-time Lottery Operations & Financial Reporting
+</p>
+
+{% include '_navigation.html' %}
+
+</div>
+
+<!-- KPI CARDS -->
+
+<div class="cards">
+
+<div class="card">
+<h2>{{ reports.tickets }}</h2>
+<p>Total Tickets</p>
+</div>
+
+<div class="card">
+<h2>{{ reports.winners }}</h2>
+<p>Winning Tickets</p>
+</div>
+
+<div class="card">
+<h2>R{{ reports.prize_total }}</h2>
+<p>Total Prize Money</p>
+</div>
+
+<div class="card">
+<h2>R{{ reports.revenue }}</h2>
+<p>Revenue</p>
+</div>
+
+<div class="card">
+<h2>{{ reports.paid }}</h2>
+<p>Settled Winners</p>
+</div>
+
+<div class="card">
+<h2>{{ reports.awaiting_payment }}</h2>
+<p>Awaiting Settlement</p>
+</div>
+
+<div class="card">
+<h2 style="color:{% if reports.profit < 0 %}#d32f2f{% else %}#0b5d3b{% endif %};">
+R{{ reports.profit }}
+</h2>
+<p>Revenue Less Prize Value</p>
+</div>
+
+<div class="card">
+<h2>{{ reports.win_rate }}%</h2>
+<p>Win Rate</p>
+</div>
+
+</div>
+
+<!-- BUSINESS SUMMARY -->
+
+<div class="section">
+
+<h2>Business Summary</h2>
+
+<table>
+
+<tr>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+
+<tr><td>Total Tickets Sold</td><td>{{ reports.tickets }}</td></tr>
+<tr><td>Total Revenue</td><td>R{{ reports.revenue }}</td></tr>
+<tr><td>Total Prize Money</td><td>R{{ reports.prize_total }}</td></tr>
+<tr><td>Revenue Less Prize Value</td><td>R{{ reports.profit }}</td></tr>
+<tr><td>Winning Tickets</td><td>{{ reports.winners }}</td></tr>
+<tr><td>Losing Tickets</td><td>{{ reports.losers }}</td></tr>
+<tr><td>Pending Tickets</td><td>{{ reports.pending }}</td></tr>
+<tr><td>Settled Winners</td><td>{{ reports.paid }}</td></tr>
+<tr><td>Awaiting Settlement</td><td>{{ reports.awaiting_payment }}</td></tr>
+<tr><td>Win Rate</td><td>{{ reports.win_rate }}%</td></tr>
+
+</table>
+
+</div>
+
+<!-- RESULTS -->
+
+<div class="section">
+
+<h2>Ticket Results</h2>
+
+<canvas id="resultsChart"></canvas>
+
+</div>
+
+<!-- REVENUE -->
+
+<div class="section">
+
+<h2>Revenue Trend</h2>
+
+<canvas id="revenueChart"></canvas>
+
+</div>
+
+<script>
+
+new Chart(document.getElementById("resultsChart"),{
+
+type:"bar",
+
+data:{
+
+labels:["Winners","Losers","Pending"],
+
+datasets:[{
+
+label:"Tickets",
+
+data:[
+{{ reports.winners }},
+{{ reports.losers }},
+{{ reports.pending }}
+],
+
+backgroundColor:[
+"#2E7D32",
+"#E53935",
+"#FB8C00"
+],
+
+borderRadius:10
+
+}]
+
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{display:false}
+}
+}
+
+});
+
+new Chart(document.getElementById("revenueChart"),{
+
+type:"line",
+
+data:{
+
+labels:{{ reports.revenue_labels|tojson }},
+
+datasets:[{
+
+label:"Revenue (R)",
+
+data:{{ reports.revenue_values|tojson }},
+
+borderColor:"#2E7D32",
+
+backgroundColor:"rgba(46,125,50,.15)",
+
+fill:true,
+
+pointRadius:5,
+
+pointHoverRadius:8,
+
+tension:0
+
+}]
+
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false
+}
+
+});
+
+</script>
+
+</body>
+</html>

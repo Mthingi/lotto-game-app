@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Prize Settlement Centre</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f4f4f4;
+            padding:30px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th,td{
+            padding:12px;
+            border:1px solid #ddd;
+            text-align:center;
+        }
+
+        th{
+            background:#0b5d3b;
+            color:white;
+        }
+
+        tr:nth-child(even){
+            background:#f9f9f9;
+        }
+
+        h1{
+            color:#0b5d3b;
+        }
+
+        .btn{
+
+            background:#0b5d3b;
+            color:white;
+            padding:8px 14px;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+
+        }
+
+        .btn:hover{
+
+            background:#09482f;
+
+        }
+
+        .cards{
+            display:flex;
+            flex-wrap:wrap;
+            gap:20px;
+            margin:25px 0;
+        }
+
+        .card{
+            flex:1;
+            min-width:220px;
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            text-align:center;
+            box-shadow:0 2px 8px rgba(0,0,0,.15);
+            transition:.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 8px 20px rgba(0,0,0,.2);
+        }
+
+        .card h2{
+            margin:0;
+            color:#0b5d3b;
+            font-size:32px;
+        }
+
+        .card p{
+            margin-top:10px;
+            color:#666;
+        }
+
+        .badge{
+            display:inline-block;
+            padding:8px 14px;
+            border-radius:30px;
+            font-size:13px;
+            font-weight:bold;
+            color:white;
+        }
+
+        .awaiting{
+            background:#f9a825;
+        }
+
+        .paid{
+            background:#2e7d32;
+        }
+
+        .pending{
+            background:#757575;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>💰 Prize Settlement Centre</h1>
+
+<p>
+
+<a href="/admin">🏠 Dashboard</a> |
+
+<a href="/winners">🏆 Winners</a> |
+
+<a href="/reports">📊 Reports</a>
+
+</p>
+
+<div class="cards">
+
+    <div class="card">
+        <h2>{{ tickets|length }}</h2>
+        <p>Total Winners</p>
+    </div>
+
+    <div class="card">
+        <h2>
+            R{{ tickets | sum(attribute='winnings') }}
+        </h2>
+        <p>Total Prize Value</p>
+    </div>
+
+    <div class="card">
+        <h2>
+            {{ tickets
+                | selectattr("payment_status","equalto","AWAITING SIZEKHAYA SETTLEMENT")
+                | list
+                | length }}
+        </h2>
+        <p>Awaiting Sizekhaya Settlement</p>
+    </div>
+
+    <div class="card">
+        <h2>
+            {{ tickets
+                | selectattr("payment_status","equalto","SETTLED")
+                | list
+                | length }}
+        </h2>
+        <p>Settled Winners</p>
+    </div>
+
+</div>
+
+<table>
+
+<tr>
+
+<th>Reference</th>
+
+<th>Phone</th>
+
+<th>Game</th>
+
+<th>Prize</th>
+
+<th>Status</th>
+
+<th>Action</th>
+
+</tr>
+
+{% for ticket in tickets %}
+
+<tr>
+
+<td>{{ ticket.reference or ticket.id }}</td>
+
+<td>{{ ticket.phone }}</td>
+
+<td>{{ ticket.game }}</td>
+
+<td>R{{ ticket.winnings }}</td>
+
+<td>
+
+{% if ticket.payment_status == "SETTLED" %}
+
+<span class="badge paid">
+    SETTLED
+</span>
+
+{% elif ticket.payment_status == "SUBMITTED TO SIZEKHAYA" %}
+
+<span class="badge awaiting">
+    SUBMITTED TO SIZEKHAYA
+</span>
+
+{% elif ticket.payment_status == "AWAITING SIZEKHAYA SETTLEMENT" %}
+
+<span class="badge awaiting">
+    AWAITING SIZEKHAYA SETTLEMENT
+</span>
+
+{% else %}
+
+<span class="badge pending">
+    {{ ticket.payment_status }}
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+<a
+href="/settlement/{{ ticket.reference }}"
+class="btn">
+
+Review Settlement
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>

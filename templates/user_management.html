@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>MPG User Management</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1b5e20;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .navigation a {
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #1b5e20;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .inactive {
+            color: red;
+            font-weight: bold;
+        }
+
+                .notice {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .create-user {
+            background: white;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+
+        .create-user h2 {
+            color: #1b5e20;
+            margin-top: 0;
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        .form-row label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-row input,
+        .form-row select {
+            width: 100%;
+            max-width: 450px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .create-button {
+            background: #1b5e20;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 8px 12px;
+            margin-right: 5px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .edit-button {
+            background: #e0e0e0;
+            color: #222;
+        }
+
+        .toggle-button {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .protected {
+            color: #666;
+            font-style: italic;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>👤 MPG USER MANAGEMENT</h1>
+
+<p class="subtitle">
+    Owner Administration — System Users & Access
+</p>
+
+{% include '_navigation.html' %}
+
+<div class="notice">
+
+    <strong>Owner Access:</strong>
+    This area allows the MPG Owner to manage system users and their access permissions.
+
+</div>
+
+<div class="create-user">
+
+    <h2>➕ Create New User</h2>
+
+    <form method="POST" action="{{ url_for('create_user') }}">
+
+        <div class="form-row">
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required
+            >
+        </div>
+
+        <div class="form-row">
+            <label for="name">Full Name</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                required
+            >
+        </div>
+
+        <div class="form-row">
+            <label for="role">Department / Role</label>
+            <select id="role" name="role" required>
+                <option value="">Select role</option>
+                <option value="RESULTS">Results</option>
+                <option value="FINANCE">Finance</option>
+                <option value="SUPPORT">Customer Support</option>
+                <option value="SMS">SMS Operations</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label for="password">Temporary Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                minlength="8"
+                required
+            >
+        </div>
+
+        <button type="submit" class="create-button">
+            Create User
+        </button>
+
+    </form>
+
+</div>
+
+<table>
+
+    <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for user in users %}
+
+    <tr>
+
+        <td>{{ user.username }}</td>
+
+        <td>{{ user.name }}</td>
+
+        <td>{{ user.role }}</td>
+
+        <td>
+
+            {% if user.active %}
+
+                <span class="active">Active</span>
+
+            {% else %}
+
+                <span class="inactive">Inactive</span>
+
+            {% endif %}
+
+        </td>
+
+        <td>
+
+            {% if user.role == "OWNER" %}
+
+                <span class="protected">Protected</span>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('edit_user', username=user.username) }}"
+                    class="action-button edit-button"
+                >
+                    ✏️ Edit
+                </a>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('toggle_user', username=user.username) }}"
+                    style="display:inline;"
+                >
+
+                    <button
+                        type="submit"
+                        class="action-button toggle-button"
+                    >
+                        {% if user.active %}
+                            🔒 Deactivate
+                        {% else %}
+                            🔓 Activate
+                        {% endif %}
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+</body>
+</html>

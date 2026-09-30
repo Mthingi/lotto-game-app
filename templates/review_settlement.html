@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Review Prize Settlement</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #0b5d3b;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.12);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #0b5d3b;
+            color: white;
+            width: 30%;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #f9a825;
+            color: white;
+            font-weight: bold;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #0b5d3b;
+            font-weight: bold;
+        }
+
+        .important {
+            border-left: 5px solid #f9a825;
+        }
+
+        .btn {
+            background: #0b5d3b;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #09482f;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <a class="back" href="/payments">
+        ← Back to Prize Settlement Centre
+    </a>
+
+    <h1>💰 Review Prize Settlement</h1>
+
+    <div class="card important">
+
+        <h2>Settlement Status</h2>
+
+        <p>
+            <span class="status">
+                {{ settlement.payment_status }}
+            </span>
+        </p>
+
+        <p>
+            This winning ticket is ready for settlement
+            review.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>🎟 Winning Ticket</h2>
+
+        <table>
+
+            <tr>
+                <th>Reference</th>
+                <td>
+                    {{ settlement.reference }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Phone Number</th>
+                <td>
+                    {{ settlement.phone }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Game</th>
+                <td>
+                    {{ settlement.game }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Draw ID</th>
+                <td>
+                    {{ settlement.draw_id }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Prize</th>
+                <td>
+                    R{{ settlement.prize }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Matches</th>
+                <td>
+                    {{ settlement.matches }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Payment Status</th>
+                <td>
+                    {{ settlement.payment_status }}
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>🎯 Result Verification</h2>
+
+        <table>
+
+            <tr>
+                <th>Selected Numbers</th>
+
+                <td>
+                    {{ settlement.numbers }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Original MPG Matched Numbers</th>
+                <td>
+                    {% if settlement.matched_numbers %}
+                        {{ settlement.matched_numbers | join(', ') }}
+                    {% elif settlement.verification_status == "HISTORICAL_DATA_INCOMPLETE" %}
+                        ⚠ Historical match details unavailable
+                    {% else %}
+                        No matched numbers recorded
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Result Checked</th>
+                <td>
+
+                    {% if settlement.verification_status == "VERIFIED" %}
+
+                        ✅ Verified
+
+                    {% elif settlement.verification_status == "HISTORICAL_RESULT_CONFLICT" %}
+
+                        ⚠ Verified — historical result conflict
+
+                    {% elif settlement.verification_status == "HISTORICAL_DATA_INCOMPLETE" %}
+
+                        ⚠ Historical data incomplete
+
+                    {% elif settlement.verification_status == "PENDING" %}
+
+                        ⏳ Pending verification
+
+                    {% else %}
+
+                        ⚠ Result unavailable
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+            <tr>
+                <th>SMS Sent</th>
+
+                <td>
+                    {% if settlement.sms_sent %}
+                        ✅ Sent
+                    {% else %}
+                        ⚠ Not Sent
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Processed At</th>
+                <td>
+
+                    {% if settlement.processed_at %}
+
+                        {{ settlement.processed_at }}
+
+                    {% elif settlement.verification_status == "HISTORICAL_DATA_INCOMPLETE" %}
+
+                        ⚠ Historical timestamp unavailable
+
+                    {% else %}
+
+                        Not available
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+            <tr>
+                <th>Official Draw Numbers</th>
+                <td>
+
+                    {% if settlement.official_draw_numbers %}
+
+                        {{ settlement.official_draw_numbers | join(', ') }}
+
+                    {% else %}
+
+                        ⚠ Official draw result unavailable
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Official Bonus Number</th>
+                <td>
+
+                    {% if settlement.official_bonus_number %}
+
+                        {{ settlement.official_bonus_number }}
+
+                    {% else %}
+
+                        N/A
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Historical Recorded Matches</th>
+                <td>
+
+                    {{ settlement.original_recorded_matches }}
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Historical Recorded Prize</th>
+                <td>
+
+                    R{{ "%.0f"|format(settlement.original_recorded_winnings) }}
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Official Matched Numbers</th>
+                <td>
+
+                    {% if settlement.official_matched_numbers %}
+
+                        {{ settlement.official_matched_numbers | join(', ') }}
+
+                    {% else %}
+
+                        None
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Official Matches</th>
+                <td>
+
+                    {{ settlement.official_matches }}
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <th>Verification Status</th>
+                <td>
+
+                    {% if settlement.verification_status == "VERIFIED" %}
+
+                        <strong>✅ VERIFIED</strong>
+
+                    {% elif settlement.verification_status == "HISTORICAL_RESULT_CONFLICT" %}
+
+                        <strong style="color:#c62828;">
+                            ⚠ HISTORICAL RESULT CONFLICT
+                        </strong>
+
+                    {% elif settlement.verification_status == "HISTORICAL_DATA_INCOMPLETE" %}
+
+                        <strong style="color:#f9a825;">
+                            ⚠ HISTORICAL DATA INCOMPLETE
+                        </strong>
+
+                    {% elif settlement.verification_status == "PENDING" %}
+
+                        <strong>⏳ PENDING</strong>
+
+                    {% else %}
+
+                        <strong>⚠ RESULT UNAVAILABLE</strong>
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+        </table>
+
+        {% if settlement.verification_status == "HISTORICAL_DATA_INCOMPLETE" %}
+
+    <div class="alert"
+         style="
+            background:#fff8e1;
+            border-left:5px solid #f9a825;
+            padding:15px;
+            margin-top:15px;
+         ">
+
+        <strong>
+            ⚠ HISTORICAL DATA INCOMPLETE
+        </strong>
+
+        <br><br>
+
+        Historical result-verification data is incomplete.
+
+        The original official draw result is not currently
+        available in MPG's Firestore records.
+
+        <br><br>
+
+        <strong>Recommended Action:</strong>
+        Review the historical draw record before making
+        any changes.
+
+    </div>
+
+    {% elif settlement.verification_status == "HISTORICAL_RESULT_CONFLICT" %}
+
+        <div class="alert"
+            style="
+                background:#ffebee;
+                border-left:5px solid #c62828;
+                padding:15px;
+                margin-top:15px;
+            ">
+
+            <strong>
+                ⚠ HISTORICAL RESULT CONFLICT
+            </strong>
+
+            <br><br>
+
+            MPG originally recorded:
+
+            <strong>
+                {{ settlement.original_recorded_matches }}
+                matches
+            </strong>
+
+            and a prize of
+
+            <strong>
+                R{{ "%.0f"|format(settlement.original_recorded_winnings) }}
+            </strong>.
+
+            <br><br>
+
+            The official historical draw result records:
+
+            <strong>
+                {{ settlement.official_matches }}
+                matches
+            </strong>
+
+            with official numbers:
+
+            <strong>
+                {{ settlement.official_draw_numbers | join(', ') }}
+            </strong>
+
+            {% if settlement.official_bonus_number %}
+
+                and Bonus:
+
+                <strong>
+                    {{ settlement.official_bonus_number }}
+                </strong>
+
+            {% endif %}
+
+            <br><br>
+
+            Official matched numbers:
+
+            <strong>
+                {% if settlement.official_matched_numbers %}
+                    {{ settlement.official_matched_numbers | join(', ') }}
+                {% else %}
+                    None
+                {% endif %}
+            </strong>
+
+            <br><br>
+
+            <strong>
+                ⚠ This historical ticket contains conflicting
+                result information.
+            </strong>
+
+            <br><br>
+
+            The original MPG record has been preserved for
+            audit purposes and should not be silently overwritten.
+
+        </div>
+
+    {% endif %}
+    </div>
+
+
+    <div class="card">
+
+        <h2>🏢 Settlement Responsibility</h2>
+
+        <p>
+            <strong>MPG Role:</strong>
+            Channel, ticket information and settlement tracking.
+        </p>
+
+        <p>
+            <strong>Prize Settlement:</strong>
+            To be handled through the authorised lottery/payment
+            process and eventual Sizekhaya integration.
+        </p>
+
+        <p>
+            MPG does not mark this ticket as financially paid
+            merely because the settlement review is completed.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>📤 Settlement Action</h2>
+
+        {% if settlement.payment_status == "AWAITING SIZEKHAYA SETTLEMENT" %}
+
+            <p>
+                This winning ticket has been verified by MPG
+                and is ready to be submitted for Sizekhaya
+                settlement processing.
+            </p>
+
+            <form
+                action="/settlement/submit/{{ settlement.reference }}"
+                method="POST"
+            >
+
+                <button
+                    type="submit"
+                    class="btn"
+                >
+                    Submit Settlement Request
+                </button>
+
+            </form>
+
+        {% elif settlement.payment_status == "SUBMITTED TO SIZEKHAYA" %}
+
+            <p>
+                ✅ Settlement request has been submitted
+                to Sizekhaya and is awaiting settlement
+                confirmation.
+            </p>
+
+            <form
+                action="{{ url_for('confirm_settlement', reference=settlement.reference) }}"
+                method="POST"
+                onsubmit="return confirm('Confirm that Sizekhaya has completed settlement for this winning ticket?');"
+            >
+
+                <button
+                    type="submit"
+                    class="btn"
+                >
+                    ✅ Confirm Settlement
+                </button>
+
+            </form>
+
+        {% elif settlement.payment_status == "SETTLED" %}
+
+            <p>
+                ✅ Sizekhaya settlement has been confirmed.
+            </p>
+
+            {% if settlement.settled_at %}
+
+                <p>
+                    <strong>Settlement Confirmed:</strong>
+                    {{ settlement.settled_at }}
+                </p>
+
+            {% endif %}
+
+        {% else %}
+
+            <p>
+                Settlement is currently:
+                <strong>
+                    {{ settlement.payment_status }}
+                </strong>
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📜 Settlement Timeline</h2>
+
+        <table>
+
+            <tr>
+                <th>Winning Ticket Created</th>
+                <td>
+                    {{ ticket.played_at }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Result Verification</th>
+                <td>
+
+                    {% if settlement.verification_status == "VERIFIED" %}
+
+                        ✅ Verified
+
+                        {% if settlement.processed_at %}
+                            <br>
+                            <small>{{ settlement.processed_at }}</small>
+                        {% endif %}
+
+                    {% elif settlement.verification_status == "HISTORICAL_RESULT_CONFLICT" %}
+
+                        ⚠ Historical result conflict
+
+                    {% elif settlement.verification_status == "HISTORICAL_DATA_INCOMPLETE" %}
+
+                        ⚠ Historical data incomplete
+
+                    {% elif settlement.verification_status == "PENDING" %}
+
+                        ⏳ Pending verification
+
+                    {% else %}
+
+                        ⚠ Result unavailable
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+            <tr>
+                <th>Submitted to Sizekhaya</th>
+                <td>
+
+                    {% if ticket.settlement_submitted_at %}
+
+                        {{ ticket.settlement_submitted_at }}
+
+                    {% else %}
+
+                        Not submitted
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+            <tr>
+                <th>Settlement Confirmed</th>
+                <td>
+
+                    {% if ticket.settled_at %}
+
+                        {{ ticket.settled_at }}
+
+                    {% else %}
+
+                        Pending
+
+                    {% endif %}
+
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</body>
+
+</html>

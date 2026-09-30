@@ -1,0 +1,33 @@
+﻿{% set role = session.get('role') %}
+
+<div class="mpg-navigation">
+
+    {% if role == "OWNER" %}
+        <a href="{{ url_for('admin') }}">🏠 Dashboard</a>
+        <a href="{{ url_for('tickets') }}">🎟 Tickets</a>
+        <a href="{{ url_for('draws') }}">🎰 Draws</a>
+        <a href="{{ url_for('winners') }}">🏆 Winners</a>
+        <a href="{{ url_for('reports') }}">📊 Reports</a>
+        <a href="{{ url_for('payments') }}">💰 Prize Settlement</a>
+        <a href="{{ url_for('customers') }}">👥 Customers</a>
+        <a href="{{ url_for('user_management') }}">👤 User Management</a>
+
+    {% elif role == "RESULTS" %}
+        <a href="{{ url_for('draws') }}">🎰 Draw Management</a>
+
+    {% elif role == "FINANCE" %}
+        <a href="{{ url_for('reports') }}">📊 Reports</a>
+        <a href="{{ url_for('winners') }}">🏆 Winners</a>
+        <a href="{{ url_for('payments') }}">💰 Prize Settlement</a>
+
+    {% elif role == "SUPPORT" %}
+        <a href="{{ url_for('tickets') }}">🎟 Ticket Centre</a>
+        <a href="{{ url_for('customers') }}">👥 Customers</a>
+
+    {% elif role == "SMS" %}
+        <a href="{{ url_for('sms_management') }}">📩 SMS Management</a>
+    {% endif %}
+
+    <a href="{{ url_for('logout') }}">🚪 Logout</a>
+
+</div>

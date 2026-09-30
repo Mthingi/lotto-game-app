@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>MPG Operations Centre - Customer Profile</title>
+
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body{
+            font-family:Arial,Helvetica,sans-serif;
+            background:#f4f6f9;
+            margin:0;
+            padding:20px;
+        }
+
+        .container{
+            max-width:1300px;
+            margin:auto;
+        }
+
+        h1{
+            color:#0b6b3a;
+        }
+
+        .nav{
+            margin:15px 0 25px;
+        }
+
+        .nav a{
+            text-decoration:none;
+            margin-right:15px;
+            font-weight:bold;
+            color:#0b6b3a;
+        }
+
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:15px;
+            margin-bottom:30px;
+        }
+
+        .card{
+            background:white;
+            border-radius:10px;
+            padding:18px;
+            box-shadow:0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .card h3{
+            margin:0;
+            font-size:14px;
+            color:#666;
+        }
+
+        .card p{
+            margin-top:10px;
+            font-size:26px;
+            font-weight:bold;
+            color:#0b6b3a;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+            box-shadow:0 2px 8px rgba(0,0,0,.08);
+        }
+
+        th{
+            background:#0b6b3a;
+            color:white;
+            padding:12px;
+        }
+
+        td{
+            padding:10px;
+            border-bottom:1px solid #ddd;
+        }
+
+        tr:hover{
+            background:#f9f9f9;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>👤 Customer Profile</h1>
+
+<div class="nav">
+    <a href="{{ url_for('admin') }}">🏠 Dashboard</a>
+    <a href="{{ url_for('customers') }}">👥 Customers</a>
+</div>
+
+<div class="cards">
+
+    <div class="card">
+        <h3>Phone</h3>
+        <p>{{ customer.phone }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Tickets</h3>
+        <p>{{ customer.tickets }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Spent</h3>
+        <p>R{{ customer.spent }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Wins</h3>
+        <p>{{ customer.wins }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Prize Value</h3>
+        <p>R{{ customer.winnings }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Win Rate</h3>
+        <p>{{ customer.win_rate }}%</p>
+    </div>
+
+    <div class="card">
+        <h3>Last Played</h3>
+        <p style="font-size:18px;">
+            {{ customer.last_played }}
+        </p>
+    </div>
+
+</div>
+
+<h2>🎟 Ticket History</h2>
+
+<form method="GET">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search reference, game or status"
+        value="{{ request.args.get('search','') }}"
+    >
+
+    <button type="submit">🔍 Search</button>
+
+</form>
+
+<br>
+
+<table>
+
+<tr>
+    <th>Date</th>
+    <th>Reference</th>
+    <th>Game</th>
+    <th>Draw</th>
+    <th>Status</th>
+    <th>Winnings</th>
+</tr>
+
+{% for ticket in tickets %}
+
+<tr>
+
+<td>{{ ticket.played_at }}</td>
+
+<td>
+    <a href="{{ url_for('ticket_details', reference=ticket.reference) }}">
+        {{ ticket.reference }}
+    </a>
+</td>
+
+<td>{{ ticket.game }}</td>
+
+<td>{{ ticket.draw }}</td>
+
+<td>
+
+{% if ticket.status=="WINNER" and ticket.payment_status=="SETTLED" %}
+🟢 SETTLED
+{% elif ticket.status=="WINNER" %}
+🟡 AWAITING SETTLEMENT
+{% elif ticket.winnings|default(0) > 0 and ticket.payment_status=="SETTLED" %}
+🟢 SETTLED
+{% elif ticket.winnings|default(0) > 0 %}
+🟡 AWAITING SETTLEMENT
+{% elif ticket.status=="LOST" %}
+🔴 LOST
+{% elif ticket.status=="ACTIVE" %}
+🔵 ACTIVE
+{% elif ticket.status=="PENDING" %}
+🟡 PENDING
+{% else %}
+{{ ticket.status }}
+{% endif %}
+
+</td>
+
+<td>R{{ ticket.winnings }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{{ url_for('customers') }}">← Back to Customers</a>
+
+</div>
+
+</body>
+</html>

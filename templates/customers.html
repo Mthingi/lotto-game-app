@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>MPG Customers</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f4f4f4;
+            padding:30px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th,td{
+            border:1px solid #ddd;
+            padding:10px;
+            text-align:center;
+        }
+
+        th{
+            background:#0b5d3b;
+            color:white;
+        }
+
+        tr:nth-child(even){
+            background:#f9f9f9;
+        }
+
+        tr:hover{
+            background:#eef7f2;
+        }
+
+        .cards{
+            display:flex;
+            flex-wrap:wrap;
+            gap:20px;
+            margin:25px 0;
+        }
+
+        .card{
+            flex:1;
+            min-width:220px;
+            background:white;
+            padding:20px;
+            border-radius:12px;
+            text-align:center;
+            box-shadow:0 2px 8px rgba(0,0,0,.15);
+        }
+
+        .card h2{
+            margin:0;
+            color:#0b5d3b;
+            font-size:32px;
+        }
+
+        .card p{
+            color:#666;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>👥 Customers</h1>
+
+<p>
+
+<a href="/admin">🏠 Dashboard</a> |
+
+<a href="/tickets">🎟 Tickets</a> |
+
+<a href="/reports">📊 Reports</a>
+
+<form method="GET" style="margin:25px 0;">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search phone number..."
+        value="{{ search }}"
+        style="
+            padding:10px;
+            width:300px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        "
+    >
+
+    <button
+        style="
+            padding:10px 18px;
+            background:#0b5d3b;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        "
+    >
+        🔍 Search
+    </button>
+
+    <a href="/customers">
+        <button
+            type="button"
+            style="
+                padding:10px 18px;
+                background:#777;
+                color:white;
+                border:none;
+                border-radius:6px;
+                cursor:pointer;
+            "
+        >
+            Clear
+        </button>
+    </a>
+
+</form>
+
+</p>
+
+<div class="cards">
+
+    <div class="cards">
+
+<div class="card">
+    <h2>{{ customers|length }}</h2>
+    <p>Total Customers</p>
+</div>
+
+<div class="card">
+    <h2>
+        {{ customers | sum(attribute='tickets') }}
+    </h2>
+    <p>Total Tickets</p>
+</div>
+
+<div class="card">
+    <h2>
+        R{{ customers | sum(attribute='spent') }}
+    </h2>
+    <p>Total Revenue</p>
+</div>
+
+<div class="card">
+    <h2>
+        R{{ customers | sum(attribute='winnings') }}
+    </h2>
+    <p>Total Prize Value</p>
+</div>
+
+</div>
+
+</div>
+
+<table>
+
+<tr>
+
+<th>Phone</th>
+
+<th>Total Tickets</th>
+
+<th>Total Spent</th>
+
+<th>Total Wins</th>
+
+<th>Total Prize Value</th>
+
+<th>Last Played</th>
+
+</tr>
+
+{% for customer in customers %}
+
+<tr>
+
+<td>
+    <a href="{{ url_for('customer_profile', phone=customer.phone) }}">
+        {{ customer.phone }}
+    </a>
+</td>
+
+<td>{{ customer.tickets }}</td>
+
+<td>R{{ customer.spent }}</td>
+
+<td>{{ customer.wins }}</td>
+
+<td>R{{ customer.winnings }}</td>
+
+<td>{{ customer.last_played }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>

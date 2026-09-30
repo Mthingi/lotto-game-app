@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>MPG SMS Management Centre</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📩 MPG SMS Management Centre</h1>
+
+    {% include '_navigation.html' %}
+
+</div>
+
+
+<!-- SMS Statistics -->
+
+<div class="stats-grid">
+
+    <div class="card">
+        <h3>Total SMS</h3>
+        <p>{{ sms_logs|length }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Delivered</h3>
+
+        <p>
+            {{ sms_logs
+               |selectattr("status", "equalto", "Delivered")
+               |list
+               |length }}
+        </p>
+
+    </div>
+
+    <div class="card">
+        <h3>Pending</h3>
+
+        <p>
+            {{ sms_logs
+               |selectattr("status", "equalto", "Pending")
+               |list
+               |length }}
+        </p>
+
+    </div>
+
+    <div class="card">
+        <h3>Failed</h3>
+
+        <p>
+            {{ sms_logs
+               |selectattr("status", "equalto", "Failed")
+               |list
+               |length }}
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- Search -->
+
+<div class="search-box">
+
+    <input
+        type="text"
+        id="smsSearch"
+        placeholder="Search Reference or Phone"
+        onkeyup="filterSMS()">
+
+    <button onclick="filterSMS()">
+
+        🔍 Search
+
+    </button>
+
+</div>
+
+
+<!-- SMS Table -->
+
+<table id="smsTable">
+
+<tr>
+
+    <th>Reference</th>
+
+    <th>Phone</th>
+
+    <th>Message Type</th>
+
+    <th>Status</th>
+
+    <th>Sent</th>
+
+    <th>Actions</th>
+
+</tr>
+
+
+{% if sms_logs %}
+
+    {% for sms in sms_logs %}
+
+    <tr>
+
+        <td>
+            {{ sms.get("reference", "") }}
+        </td>
+
+        <td>
+            {{ sms.get("phone", "") }}
+        </td>
+
+        <td>
+            {{ sms.get("message_type", "") }}
+        </td>
+
+        <td>
+            {{ sms.get("status", "") }}
+        </td>
+
+        <td>
+            {{ sms.get("sent_at", "") }}
+        </td>
+
+        <td>
+
+            <button
+                type="button"
+                onclick='showMessage({{ sms.get("message", "")|tojson }})'>
+
+                View
+
+            </button>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+{% else %}
+
+    <tr>
+
+        <td colspan="6" style="text-align:center">
+
+            No SMS messages found.
+
+        </td>
+
+    </tr>
+
+{% endif %}
+
+</table>
+
+
+<!-- Message Viewer -->
+
+<script>
+
+function showMessage(message) {
+
+    alert(message);
+
+}
+
+
+function filterSMS() {
+
+    const input =
+        document.getElementById("smsSearch");
+
+    const filter =
+        input.value.toLowerCase();
+
+    const table =
+        document.getElementById("smsTable");
+
+    const rows =
+        table.getElementsByTagName("tr");
+
+
+    for (let i = 1; i < rows.length; i++) {
+
+        const row =
+            rows[i];
+
+        const text =
+            row.textContent.toLowerCase();
+
+        if (text.includes(filter)) {
+
+            row.style.display = "";
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

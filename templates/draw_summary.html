@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Draw Summary</title>
+
+<style>
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f4f4f4;
+    margin:0;
+    padding:30px;
+}
+
+/* ===========================
+   PAGE HEADINGS
+=========================== */
+
+h1{
+    color:#0b5d3b;
+    margin-bottom:10px;
+}
+
+h2{
+    color:#0b5d3b;
+}
+
+/* ===========================
+   LINKS
+=========================== */
+
+a{
+    color:#0b5d3b;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+/* ===========================
+   CARDS
+=========================== */
+
+.card{
+    background:#ffffff;
+    padding:20px;
+    margin-bottom:25px;
+    border-radius:12px;
+    box-shadow:0 3px 10px rgba(0,0,0,.12);
+}
+
+/* ===========================
+   KPI GRID
+=========================== */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:20px;
+    margin:25px 0;
+}
+
+.stat-card{
+    background:#ffffff;
+    border-left:6px solid #0b5d3b;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+.stat-title{
+    font-size:15px;
+    font-weight:bold;
+    color:#666;
+    margin-bottom:12px;
+}
+
+.stat-value{
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    color:#005c3c;
+
+    margin-top:10px;
+
+    margin-bottom:10px;
+
+}
+
+.ball{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#0b5d3b;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    font-size:16px;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+
+.stat-card small{
+
+    color:#888;
+
+    font-size:13px;
+
+}
+
+/* ===========================
+   TABLES
+=========================== */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#ffffff;
+}
+
+table{
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th{
+    background:#0b5d3b;
+    color:white;
+    padding:12px;
+    text-align:center;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid #dddddd;
+    text-align:center;
+}
+
+tr:hover{
+    background:#f8f8f8;
+}
+
+/* ===========================
+   STATUS BADGES
+=========================== */
+
+.status-success{
+    color:#0b8f3a;
+    font-weight:bold;
+}
+
+.status-warning{
+    color:#d67c00;
+    font-weight:bold;
+}
+
+.status-danger{
+    color:#c62828;
+    font-weight:bold;
+}
+
+.badge{
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.badge-success{
+    background:#d8f5dd;
+    color:#146c2e;
+}
+
+.badge-danger{
+    background:#ffe0e0;
+    color:#b00020;
+}
+
+.badge-warning{
+    background:#fff3cd;
+    color:#8a6d00;
+}
+
+.btn-view{
+
+display:inline-block;
+
+padding:8px 16px;
+
+background:#0b5d3b;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:6px;
+
+font-weight:bold;
+
+}
+
+.btn-view:hover{
+
+background:#08482e;
+
+}
+
+.stat-card.blue{
+border-left:6px solid #1976d2;
+}
+
+.stat-card.green{
+border-left:6px solid #2e7d32;
+}
+
+.stat-card.red{
+border-left:6px solid #c62828;
+}
+
+.stat-card.orange{
+border-left:6px solid #ef6c00;
+}
+
+.stat-card.gold{
+border-left:6px solid #f9a825;
+}
+
+.stat-card.teal{
+border-left:6px solid #00897b;
+}
+
+.stat-card.purple{
+border-left:6px solid #6a1b9a;
+}
+
+.stat-card.darkgreen{
+border-left:6px solid #00695c;
+}
+
+.stat-card{
+
+    transition:.25s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width:768px){
+
+    body{
+        padding:15px;
+    }
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    table{
+        font-size:14px;
+    }
+
+}
+
+.badge-success{
+    background:#d4edda;
+    color:#155724;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.badge-warning{
+    background:#fff3cd;
+    color:#856404;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.badge-danger{
+    background:#f8d7da;
+    color:#721c24;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.view-btn{
+    background:#0b5d3b;
+    color:white;
+    border:none;
+    padding:8px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.view-btn:hover{
+    background:#08472d;
+}
+
+/* ===========================
+   LOTTO BALLS
+=========================== */
+
+.ball{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#0b5d3b;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    font-weight:bold;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+
+.balls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+.balls{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+
+}
+
+.ball{
+
+    width:44px;
+    height:44px;
+
+    border-radius:50%;
+
+    background:linear-gradient(145deg,#0d6b43,#08482d);
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:bold;
+
+    font-size:18px;
+
+    box-shadow:0 5px 12px rgba(0,0,0,.25);
+
+    transition:.2s;
+
+}
+
+.ball:hover{
+
+    transform:scale(1.08);
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🎰 Draw Summary</h1>
+
+<p>
+    <a href="/draws">⬅ Back to Draws</a>
+</p>
+<div class="card">
+
+    <h1>🎰 DRAW OPERATIONS CENTRE</h1>
+
+    <p>
+        Lottery Draw Monitoring • Ticket Processing • Revenue Tracking • Prize Management
+    </p>
+
+    <table>
+
+        <tr>
+            <td><strong>🎮 Game</strong></td>
+            <td>{{ draw.game }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>🆔 Draw ID</strong></td>
+            <td>{{ draw.draw_id }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>🕒 Schedule</strong></td>
+            <td>{{ draw.draw_time }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>🎱 Winning Numbers</strong></td>
+
+            <td>
+
+                <div class="balls">
+
+                    {% for number in draw.numbers %}
+
+                        <span class="ball">{{ number.strip() }}</span>
+
+                    {% endfor %}
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        <tr>
+            <td><strong>💰 Jackpot</strong></td>
+            <td>N/A</td>
+        </tr>
+
+        <tr>
+            <td><strong>📊 Status</strong></td>
+
+            <td>
+
+                {% if draw.processed %}
+
+                    <span class="badge-success">
+                        ✔ PROCESSED
+                    </span>
+
+                {% else %}
+
+                    <span class="badge-warning">
+                        PENDING
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        <tr>
+            
+            <td>{{ draw.processed_at }}</td>
+        </tr>
+
+    </table>
+
+<div class="card" style="border-left:6px solid #2e7d32; background:#f1f8f4;">
+
+    <strong style="color:#1b5e20;">
+        ✔ Draw Processing Complete
+    </strong>
+
+    <p style="margin:8px 0 0;color:#2e7d32;">
+        All tickets have been processed successfully. No pending tickets remain for Draw {{ draw.draw_id }}.
+    </p>
+
+</div>
+
+
+<div class="card">
+
+    <h2 style="margin:0;color:#0b5d3b;">
+        📊 Draw Operations Dashboard
+    </h2>
+
+    <p style="color:#666;margin-top:8px;">
+        Real-time draw performance, ticket processing status and financial overview
+    </p>
+
+</div>
+
+<div class="stats-grid">
+
+    <!-- Tickets -->
+    <div class="stat-card blue">
+        <div class="stat-title">🎟 Tickets</div>
+        <div class="stat-value">{{ ticket_sales }}</div>
+        <small>Total Tickets Processed</small>
+    </div>
+
+    <!-- Winners -->
+    <div class="stat-card green">
+        <div class="stat-title">🏆 Winners</div>
+        <div class="stat-value">{{ winners }}</div>
+        <small>Winning Tickets</small>
+    </div>
+
+    <!-- Losers -->
+    <div class="stat-card red">
+        <div class="stat-title">❌ Losers</div>
+        <div class="stat-value">{{ losers }}</div>
+        <small>Non-winning Tickets</small>
+    </div>
+
+    <!-- Pending -->
+    <div class="stat-card orange">
+        <div class="stat-title">⏳ Pending</div>
+        <div class="stat-value">{{ pending }}</div>
+        <small>Awaiting Results</small>
+    </div>
+
+    <!-- Total Prize Value -->
+    <div class="stat-card gold">
+        <div class="stat-title">💰 Total Prize Value</div>
+        <div class="stat-value">
+            R{{ "{:,}".format(prize_total) }}
+        </div>
+        <small>Total Prize Value</small>
+    </div>
+
+    <!-- Revenue -->
+    <div class="stat-card teal">
+        <div class="stat-title">💵 Revenue</div>
+        <div class="stat-value">
+            R{{ "{:,}".format(revenue) }}
+        </div>
+        <small>Ticket Sales Revenue</small>
+    </div>
+
+    <!-- Profit -->
+    <div class="stat-card purple">
+        <div class="stat-title">📈 Revenue Less Prize Value</div>
+        <div class="stat-value">
+            R{{ "{:,}".format(profit) }}
+        </div>
+        <small>Revenue Less Prize Value</small>
+    </div>
+
+    <!-- Jackpot -->
+    <div class="stat-card darkgreen">
+        <div class="stat-title">🎰 Jackpot</div>
+        <div class="stat-value">
+            N/A
+        </div>
+        <small>Official Jackpot</small>
+    </div>
+
+</div>
+
+<h2>🎟 Ticket Processing Centre</h2>
+
+<table class="table">
+
+    <thead>
+
+        <tr>
+
+            <th>Reference</th>
+
+            <th>Customer</th>
+
+            <th>Played</th>
+
+            <th>Numbers</th>
+
+            <th>Matched</th>
+
+            <th>Prize</th>
+
+            <th>Settlement</th>
+
+            <th>Result</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+{% for ticket in tickets %}
+
+<tr>
+
+<td>{{ ticket.reference }}</td>
+
+<td>{{ ticket.phone }}</td>
+
+<td>{{ ticket.played_at }}</td>
+
+<td>{{ ticket.numbers }}</td>
+
+<td>{{ ticket.matches }}</td>
+
+<td>R{{ "{:,}".format(ticket.winnings) }}</td>
+
+<td>
+
+{% if ticket.payment_status == "SETTLED" %}
+
+<span style="color:green;">✅ Settled</span>
+
+{% elif ticket.payment_status == "SUBMITTED TO SIZEKHAYA" %}
+
+<span style="color:blue;">Submitted for Settlement</span>
+
+{% elif ticket.payment_status == "AWAITING SIZEKHAYA SETTLEMENT" %}
+
+<span style="color:orange;">Awaiting Settlement</span>
+
+{% else %}
+
+<span style="color:gray;">—</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if ticket.won %}
+
+<span class="badge badge-success">
+🏆 WINNER
+</span>
+
+{% elif ticket.result_checked %}
+
+<span class="badge badge-danger">
+❌ LOST
+</span>
+
+{% else %}
+
+<span class="badge badge-warning">
+⏳ PENDING
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="/ticket/{{ ticket.reference }}" class="btn-view">
+
+👁 View
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>

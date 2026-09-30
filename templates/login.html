@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>MPG Admin Login</title>
+
+    <style>
+
+        body{
+            background:#f4f4f4;
+            font-family:Arial;
+        }
+
+        .login{
+
+            width:350px;
+
+            margin:100px auto;
+
+            background:white;
+
+            padding:30px;
+
+            border-radius:10px;
+
+            box-shadow:0 0 10px #ccc;
+
+        }
+
+        h2{
+
+            text-align:center;
+
+            color:green;
+
+        }
+
+        input{
+
+            width:100%;
+
+            padding:10px;
+
+            margin-top:15px;
+
+            box-sizing:border-box;
+
+        }
+
+        button{
+
+            width:100%;
+
+            padding:12px;
+
+            margin-top:20px;
+
+            background:green;
+
+            color:white;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:16px;
+
+        }
+
+        button:hover{
+
+            background:#006400;
+
+        }
+
+        .error{
+
+            margin-top:15px;
+
+            padding:10px;
+
+            background:#f8d7da;
+
+            color:#721c24;
+
+            border:1px solid #f5c6cb;
+
+            border-radius:5px;
+
+            text-align:center;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login">
+
+<h2>MPG ADMIN</h2>
+
+{% if error %}
+
+<div class="error">
+
+    {{ error }}
+
+</div>
+
+{% endif %}
+
+<form method="POST" action="/login">
+
+<input
+type="text"
+name="username"
+placeholder="Username">
+
+<input
+type="password"
+name="password"
+placeholder="Password">
+
+<button>
+
+Login
+
+</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>
+
+
