@@ -5,6 +5,7 @@ load_dotenv(override=True)
 
 from flask import Flask, request, jsonify, render_template, Response, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+import pyotp
 import uuid
 import random
 import json
@@ -267,6 +268,20 @@ def role_required(permission):
     return decorator
 
 
+def verify_totp(user, code):
+    secret = user.get("totp_secret")
+
+    if not secret:
+        return False
+
+    totp = pyotp.TOTP(secret)
+
+    return totp.verify(code, valid_window=1)
+
+def generate_totp_secret():
+    return pyotp.random_base32()
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -318,6 +333,17 @@ def login():
                 error="This account is inactive"
             )
 
+        if user.get("role") == "OWNER" and user.get("totp_enabled"):
+
+            session.clear()
+
+            session["pending_2fa_user"] = username
+
+            return redirect(
+                url_for("login_2fa")
+            )
+
+
         session.clear()
 
         session["user_id"] = username
@@ -345,6 +371,70 @@ def login():
 
     return render_template("login.html")
 
+@app.route("/login/2fa", methods=["GET", "POST"])
+def login_2fa():
+
+    if "pending_2fa_user" not in session:
+        return redirect(url_for("login"))
+
+    username = session.get("pending_2fa_user")
+
+    user_doc = users_ref.document(username).get()
+
+    if not user_doc.exists:
+        session.clear()
+        return redirect(url_for("login"))
+
+    user = user_doc.to_dict()
+
+    if request.method == "POST":
+
+        code = request.form.get(
+            "code",
+            ""
+        ).strip()
+
+        if not verify_totp(user, code):
+
+            return render_template(
+                "login_2fa.html",
+                error="Invalid authentication code. Please try again."
+            )
+
+        session.clear()
+
+        session["user_id"] = username
+        session["role"] = user.get(
+            "role",
+            "SUPPORT"
+        )
+
+        session["name"] = user.get(
+            "name",
+            username
+        )
+
+        landing_pages = {
+            "OWNER": "admin",
+            "RESULTS": "draws",
+            "FINANCE": "reports",
+            "SUPPORT": "tickets",
+            "SMS": "sms_management"
+        }
+
+        return redirect(
+            url_for(
+                landing_pages.get(
+                    session["role"],
+                    "admin"
+                )
+            )
+        )
+
+    return render_template(
+        "login_2fa.html"
+    )
+
 
 @app.route("/logout")
 def logout():
@@ -353,6 +443,62 @@ def logout():
 
     return redirect(
         url_for("login")
+    )
+
+@app.route("/owner/2fa/setup", methods=["GET", "POST"])
+@role_required("admin")
+def owner_2fa_setup():
+
+    username = session.get("user_id")
+
+    user_ref = users_ref.document(username)
+    user_doc = user_ref.get()
+
+    if not user_doc.exists:
+        session.clear()
+        return redirect(url_for("login"))
+
+    user = user_doc.to_dict()
+
+    if user.get("role") != "OWNER":
+        return "Access denied", 403
+
+    secret = user.get("totp_secret")
+
+    if not secret:
+        secret = generate_totp_secret()
+
+        user_ref.update({
+            "totp_secret": secret,
+            "totp_enabled": False
+        })
+
+        user["totp_secret"] = secret
+
+    if request.method == "POST":
+
+        code = request.form.get(
+            "code",
+            ""
+        ).strip()
+
+        if not verify_totp(user, code):
+
+            return render_template(
+                "owner_2fa_setup.html",
+                secret=secret,
+                error="Invalid authentication code. Please try again."
+            )
+
+        user_ref.update({
+            "totp_enabled": True
+        })
+
+        return redirect(url_for("admin"))
+
+    return render_template(
+        "owner_2fa_setup.html",
+        secret=secret
     )
 
 # =========================================

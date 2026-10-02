@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>MPG Two-Factor Authentication</title>
+
+    <style>
+
+        body{
+            background:#f4f4f4;
+            font-family:Arial;
+        }
+
+        .setup{
+
+            width:450px;
+
+            margin:70px auto;
+
+            background:white;
+
+            padding:30px;
+
+            border-radius:10px;
+
+            box-shadow:0 0 10px #ccc;
+
+        }
+
+        h2{
+
+            text-align:center;
+
+            color:green;
+
+        }
+
+        .info{
+
+            margin-top:20px;
+
+            padding:15px;
+
+            background:#f1f8f1;
+
+            border:1px solid #c8e6c9;
+
+            border-radius:5px;
+
+        }
+
+        .secret{
+
+            margin-top:20px;
+
+            padding:15px;
+
+            background:#f4f4f4;
+
+            border:1px solid #ddd;
+
+            border-radius:5px;
+
+            word-break:break-all;
+
+            font-family:monospace;
+
+            font-size:18px;
+
+            text-align:center;
+
+        }
+
+        input{
+
+            width:100%;
+
+            padding:12px;
+
+            margin-top:15px;
+
+            box-sizing:border-box;
+
+            font-size:18px;
+
+            text-align:center;
+
+            letter-spacing:4px;
+
+        }
+
+        button{
+
+            width:100%;
+
+            padding:12px;
+
+            margin-top:20px;
+
+            background:green;
+
+            color:white;
+
+            border:none;
+
+            cursor:pointer;
+
+            font-size:16px;
+
+        }
+
+        button:hover{
+
+            background:#006400;
+
+        }
+
+        .warning{
+
+            margin-top:20px;
+
+            padding:15px;
+
+            background:#fff3cd;
+
+            color:#856404;
+
+            border:1px solid #ffeeba;
+
+            border-radius:5px;
+
+        }
+
+        .error{
+
+            margin-top:15px;
+
+            padding:10px;
+
+            background:#f8d7da;
+
+            color:#721c24;
+
+            border:1px solid #f5c6cb;
+
+            border-radius:5px;
+
+            text-align:center;
+
+        }
+
+        .back{
+
+            display:block;
+
+            margin-top:25px;
+
+            text-align:center;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="setup">
+
+    <h2>MPG ADMIN 2FA</h2>
+
+    <div class="info">
+
+        <strong>Step 1</strong>
+
+        <p>
+            Open your authenticator app on your phone and add a new account.
+        </p>
+
+    </div>
+
+    <div class="info">
+
+        <strong>Step 2</strong>
+
+        <p>
+            Enter the setup key below into your authenticator app.
+        </p>
+
+    </div>
+
+    <div class="secret">
+
+        {{ secret }}
+
+    </div>
+
+    <div class="warning">
+
+        <strong>Keep this key private.</strong>
+
+        <p>
+            Anyone who has this key can generate your MPG authentication codes.
+            Do not send or share it.
+        </p>
+
+    </div>
+
+    {% if error %}
+
+    <div class="error">
+
+        {{ error }}
+
+    </div>
+
+    {% endif %}
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="code"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            placeholder="6-digit code"
+            required
+        >
+
+        <button type="submit">
+            Verify & Enable 2FA
+        </button>
+
+    </form>
+
+    <a class="back" href="{{ url_for('admin') }}">
+        Return to MPG Admin
+    </a>
+
+</div>
+
+</body>
+
+</html>
