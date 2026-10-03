@@ -1370,9 +1370,50 @@ def payments():
 # MIGRATE OLD PRIZE SETTLEMENT STATUSES
 # =========================================
 
-@app.route("/admin/migrate-settlement-status")
+@app.route(
+    "/admin/migrate-settlement-status",
+    methods=["GET", "POST"]
+)
 @role_required("maintenance")
 def migrate_settlement_status():
+
+    # GET only shows a confirmation page.
+    # The migration runs only after an explicit POST.
+    if request.method == "GET":
+        return """
+        <h1>Settlement Status Migration</h1>
+
+        <p>
+            This maintenance action will migrate old winning tickets
+            with the legacy payment status:
+        </p>
+
+        <p>
+            <strong>AWAITING PAYMENT</strong>
+        </p>
+
+        <p>
+            to:
+        </p>
+
+        <p>
+            <strong>AWAITING SIZEKHAYA SETTLEMENT</strong>
+        </p>
+
+        <p>
+            No other ticket statuses will be changed.
+        </p>
+
+        <form method="POST">
+            <button type="submit">
+                Run Migration
+            </button>
+        </form>
+
+        <p>
+            <a href="/admin">Cancel and return to Dashboard</a>
+        </p>
+        """
 
     print()
     print("=" * 60)
