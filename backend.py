@@ -59,8 +59,6 @@ except Exception as e:
 AT_USERNAME = os.getenv("AT_USERNAME")
 AT_API_KEY = os.getenv("AT_API_KEY")
 
-print("Backend Username:", repr(AT_USERNAME))
-
 sms = None
 
 try:
@@ -73,13 +71,6 @@ try:
         )
 
         sms = africastalking.SMS
-
-        print("=" * 50)
-        print("Africa's Talking Configuration")
-        print("Username :", AT_USERNAME)
-        print("API Key  :", AT_API_KEY[:12] + "...")
-        print("SMS Obj  :", sms)
-        print("=" * 50)
 
         print("✅ SMS initialized")
 
