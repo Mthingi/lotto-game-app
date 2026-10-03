@@ -2061,7 +2061,7 @@ def review_settlement(reference):
         settlement=settlement
     )
 
-@app.route("/repair-historical-ticket/<reference>")
+@app.route("/repair-historical-ticket/<reference>", methods=["POST"])
 @role_required("maintenance")
 def repair_historical_ticket(reference):
 
