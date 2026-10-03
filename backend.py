@@ -182,7 +182,8 @@ app.secret_key = os.getenv('MPG_SECRET_KEY')
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.getenv("MPG_ENV") == "production"
+    SESSION_COOKIE_SECURE=os.getenv("MPG_ENV") == "production",
+    PERMANENT_SESSION_LIFETIME=1800
 )
 
 # =========================================
@@ -346,6 +347,8 @@ def login():
 
         session.clear()
 
+        session.permanent = True
+
         session["user_id"] = username
         session["role"] = user.get(
             "role",
@@ -396,12 +399,29 @@ def login_2fa():
 
         if not verify_totp(user, code):
 
+            attempts = session.get(
+                "2fa_attempts",
+                0
+            ) + 1
+
+            session["2fa_attempts"] = attempts
+
+            if attempts >= 5:
+
+                session.clear()
+
+                return redirect(
+                    url_for("login")
+                )
+
             return render_template(
                 "login_2fa.html",
                 error="Invalid authentication code. Please try again."
             )
 
         session.clear()
+
+        session.permanent = True
 
         session["user_id"] = username
         session["role"] = user.get(
