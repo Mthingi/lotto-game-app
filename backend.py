@@ -518,8 +518,12 @@ def owner_2fa_setup():
 @app.route("/", methods=["GET"])
 def home():
 
-    return render_template("login.html")
+    return render_template("home.html")
 
+@app.route("/demo", methods=["GET"])
+def demo():
+
+    return render_template("demo.html")
 
 @app.route("/admin")
 @role_required("admin")

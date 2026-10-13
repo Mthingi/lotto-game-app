@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MPG Demo | My Phanda Game</title>
+
+    <style>
+
+    
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mpg-navy: #172033;
+            --mpg-blue: #2457a7;
+            --mpg-background: #f4f7fb;
+            --mpg-border: #e2e8f0;
+            --mpg-muted: #5b6472;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--mpg-background);
+            color: var(--mpg-navy);
+            line-height: 1.6;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--mpg-border);
+            padding: 18px 6%;
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--mpg-blue);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .demo-container {
+            width: 100%;
+            max-width: 1160px;
+            margin: 54px auto;
+            padding: 0 24px;
+        }
+
+        .intro {
+            text-align: center;
+            max-width: 760px;
+            margin: 0 auto 42px;
+        }
+
+        .intro h1 {
+            font-size: clamp(30px, 4vw, 42px);
+            line-height: 1.2;
+            letter-spacing: -1px;
+            margin: 0 0 20px;
+        }
+
+        .intro p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--mpg-muted);
+            margin: 12px 0;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        .card {
+            min-width: 0;
+            background: #ffffff;
+            border: 1px solid var(--mpg-border);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 35px rgba(23, 32, 51, 0.05);
+        }
+
+        .card h2 {
+            font-size: 22px;
+            line-height: 1.3;
+            margin: 0 0 22px;
+        }
+
+        .flow-step {
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 1px solid #edf0f5;
+            border-radius: 12px;
+            background: #f8faff;
+            line-height: 1.7;
+            color: #414b5c;
+        }
+
+        .flow-step strong {
+            display: block;
+            color: var(--mpg-navy);
+            margin-bottom: 6px;
+        }
+
+        .demo-note {
+            margin-top: 24px;
+            padding: 18px;
+            border-left: 4px solid var(--mpg-blue);
+            border-radius: 0 10px 10px 0;
+            background: #f1f6ff;
+            color: #414b5c;
+            line-height: 1.7;
+        }
+
+        .demo-note strong {
+            display: block;
+            color: var(--mpg-navy);
+            margin-bottom: 6px;
+        }
+
+        .phone {
+            width: 100%;
+            max-width: 330px;
+            margin: 0 auto;
+            background: #111827;
+            border: 1px solid #30394a;
+            border-radius: 30px;
+            padding: 12px;
+            box-shadow: 0 16px 35px rgba(17, 24, 39, 0.16);
+        }
+
+        .phone-screen {
+            min-height: 500px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 26px 20px;
+        }
+
+        .phone-title {
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: 0.2px;
+        }
+
+        .ussd-message {
+            background: #f1f5f9;
+            border: 1px solid #e5eaf1;
+            border-radius: 12px;
+            padding: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+            color: #263246;
+            font-size: 14px;
+        }
+
+        #demoAction {
+            display: grid;
+            gap: 10px;
+        }
+
+        .demo-button {
+            display: block;
+            width: 100%;
+            min-height: 46px;
+            padding: 13px 16px;
+            border: 1px solid var(--mpg-navy);
+            border-radius: 9px;
+            background: var(--mpg-navy);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .demo-button:hover {
+            background: var(--mpg-blue);
+            border-color: var(--mpg-blue);
+        }
+
+        .demo-button:focus-visible,
+        .back-link:focus-visible {
+            outline: 3px solid #8bb7ff;
+            outline-offset: 3px;
+        }
+
+        .demo-button:active {
+            transform: scale(0.99);
+        }
+
+        .small-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #687386;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: #687386;
+            font-size: 13px;
+            border-top: 1px solid var(--mpg-border);
+            background: #ffffff;
+        }
+
+        @media (max-width: 800px) {
+            .demo-container {
+                margin: 36px auto;
+                padding: 0 18px;
+            }
+
+            .demo-grid {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 22px;
+            }
+
+            .intro {
+                margin-bottom: 30px;
+            }
+
+            .intro p {
+                font-size: 16px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .header-inner {
+                gap: 14px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            header {
+                padding: 16px;
+            }
+
+            .brand {
+                font-size: 18px;
+            }
+
+            .back-link {
+                font-size: 12px;
+            }
+
+            .demo-container {
+                padding: 0 12px;
+                margin: 28px auto;
+            }
+
+            .card {
+                padding: 18px;
+                border-radius: 14px;
+            }
+
+            .card h2 {
+                font-size: 20px;
+            }
+
+            .phone {
+                padding: 9px;
+                border-radius: 24px;
+            }
+
+            .phone-screen {
+                padding: 22px 15px;
+                border-radius: 17px;
+            }
+
+            .ussd-message {
+                padding: 14px;
+                font-size: 13px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="header-inner">
+
+        <div class="brand">
+            My Phanda Game
+        </div>
+
+        <a href="/" class="back-link">
+            ← Back to MPG
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="demo-container">
+
+    <div class="intro">
+
+        <h1>
+            MPG Technology Demonstration
+        </h1>
+
+        <p>
+            Explore a technology demonstration of the digital 
+            customer journey being developed by My Phanda Game (MPG).
+        </p>
+
+        <p>
+            This demonstration illustrates the digital journey only.
+            It does not process real lottery transactions or payments.
+        </p>
+
+    </div>
+
+
+    <div class="demo-grid">
+
+
+        <div class="card">
+
+            <h2>
+                The intended service journey
+            </h2>
+
+            <div class="flow-step">
+
+                <strong>1. Customer</strong>
+
+                The customer accesses the service through a mobile device
+                using USSD.
+
+            </div>
+
+
+            <div class="flow-step">
+
+                <strong>2. MPG Platform</strong>
+
+                MPG provides the digital interface and customer journey
+                between the mobile user and the relevant service.
+
+            </div>
+
+
+            <div class="flow-step">
+
+                <strong>3. Licensed Operator</strong>
+
+                The intended model connects the digital distribution
+                channel with a licensed lottery operator.
+
+            </div>
+
+
+            <div class="demo-note">
+
+                <strong>Prototype demonstration</strong><br>
+
+                This prototype demonstrates the proposed digital customer journey. 
+                Live payment, settlement and licensed-operator integrations are not enabled.
+                
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>
+                USSD Journey Preview
+            </h2>
+
+            <div class="phone">
+
+    <div class="phone-screen">
+
+        <div class="phone-title">
+            MPG USSD
+        </div>
+
+        <div class="ussd-message" id="ussdMessage">
+Welcome to My Phanda Game
+
+1. Lotto
+2. PowerBall
+3. Daily Lotto
+
+Select an option to continue.
+        </div>
+
+        <div id="demoAction">
+
+            <button
+                class="demo-button"
+                onclick="startDemo()">
+                Start Demonstration
+            </button>
+
+        </div>
+
+        <div class="small-text">
+
+            Demonstration only — no real ticket purchase,
+            payment or prize transaction takes place.
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
+
+
+<footer>
+
+    My Phanda Game (Pty) Ltd · South Africa
+
+</footer>
+
+
+<script>
+
+    const message = document.getElementById("ussdMessage");
+
+    let selectedGame = "";
+    let selectedBoards = 0;
+
+    function startDemo() {
+
+        message.textContent =
+    `MPG USSD
+
+    Select a game:
+
+    1. Lotto
+    2. PowerBall
+    3. Daily Lotto`;
+
+        const button = document.querySelector(".demo-button");
+
+        button.textContent = "1. Lotto";
+        button.onclick = selectLotto;
+
+        const secondButton = document.createElement("button");
+
+        secondButton.className = "demo-button";
+        secondButton.textContent = "2. PowerBall";
+        secondButton.onclick = selectPowerBall;
+
+        const thirdButton = document.createElement("button");
+
+        thirdButton.className = "demo-button";
+        thirdButton.textContent = "3. Daily Lotto";
+        thirdButton.onclick = selectDailyLotto;
+
+        const actionArea = document.getElementById("demoAction");
+
+        actionArea.innerHTML = "";
+        actionArea.appendChild(button);
+        actionArea.appendChild(secondButton);
+        actionArea.appendChild(thirdButton);
+    }
+
+    
+
+    function selectPowerBall() {
+
+        selectedGame = "PowerBall";
+
+        message.textContent =
+    `MPG USSD
+
+    PowerBall selected.
+
+    Select number of boards:
+
+    1. One board
+    2. Two boards
+    3. Three boards`;
+
+        const button = document.querySelector(".demo-button");
+
+        button.textContent = "Select One Board";
+
+        button.onclick = selectOneBoard;
+    }
+
+
+    function selectDailyLotto() {
+
+        selectedGame = "Daily Lotto";
+
+        message.textContent =
+    `MPG USSD
+
+    Daily Lotto selected.
+
+    Select number of boards:
+
+    1. One board
+    2. Two boards
+    3. Three boards`;
+
+        const button = document.querySelector(".demo-button");
+
+        button.textContent = "Select One Board";
+
+        button.onclick = selectOneBoard;
+    }
+
+
+    function selectLotto() {
+
+        selectedGame = "Lotto";
+
+        message.textContent =
+    `MPG USSD
+
+    Lotto selected.
+
+    Select number of boards:
+
+    1. One board
+    2. Two boards
+    3. Three boards`;
+
+         const button = document.querySelector(".demo-button");
+
+        button.textContent = "Select One Board";
+
+        button.onclick = selectOneBoard;
+    }
+
+
+    
+    function selectOneBoard() {
+
+        message.textContent =
+    `MPG USSD
+
+    ${selectedGame}
+
+    Select number of boards:
+
+    1. One board
+    2. Two boards
+    3. Three boards`;
+
+        const actionArea = document.getElementById("demoAction");
+
+        actionArea.innerHTML = "";
+
+        const oneBoardButton = document.createElement("button");
+        oneBoardButton.className = "demo-button";
+        oneBoardButton.textContent = "1. One Board";
+        oneBoardButton.onclick = function() {
+            selectBoards(1);
+        };
+
+        const twoBoardButton = document.createElement("button");
+        twoBoardButton.className = "demo-button";
+        twoBoardButton.textContent = "2. Two Boards";
+        twoBoardButton.onclick = function() {
+            selectBoards(2);
+        };
+
+        const threeBoardButton = document.createElement("button");
+        threeBoardButton.className = "demo-button";
+        threeBoardButton.textContent = "3. Three Boards";
+        threeBoardButton.onclick = function() {
+            selectBoards(3);
+        };
+
+        actionArea.appendChild(oneBoardButton);
+        actionArea.appendChild(twoBoardButton);
+        actionArea.appendChild(threeBoardButton);
+    }
+
+    
+    function generateSampleNumbers(count, max) {
+
+        const numbers = [];
+
+        while (numbers.length < count) {
+
+            const number = Math.floor(Math.random() * max) + 1;
+
+            if (!numbers.includes(number)) {
+                numbers.push(number);
+            }
+        }
+
+        return numbers.sort((a, b) => a - b);
+    }
+    
+    function selectBoards(numberOfBoards) {
+
+        selectedBoards = numberOfBoards;
+
+        message.textContent =
+    `MPG USSD
+
+    ${selectedGame}
+
+    ${selectedBoards} board(s) selected.
+
+    Number Selection
+
+    This is a simulated Quick Pick demonstration.
+
+    Generate sample numbers to continue.`;
+
+        const actionArea = document.getElementById("demoAction");
+
+        actionArea.innerHTML = "";
+
+        const generateButton = document.createElement("button");
+        generateButton.className = "demo-button";
+        generateButton.textContent = "Generate Demo Numbers";
+
+        generateButton.onclick = function() {
+
+            let demoNumbers = [];
+
+            for (let i = 0; i < selectedBoards; i++) {
+
+                
+                if (selectedGame === "PowerBall") {
+
+                    const mainNumbers = generateSampleNumbers(5, 50);
+                    const powerBall = generateSampleNumbers(1, 20)[0];
+
+                    demoNumbers.push(
+                        "Board " + (i + 1) + ": " +
+                        mainNumbers.join(", ") +
+                        " | Sample PowerBall: " + powerBall
+                    );
+
+                } else if (selectedGame === "Daily Lotto") {
+
+                    const numbers = generateSampleNumbers(5, 36);
+
+                    demoNumbers.push(
+                        "Board " + (i + 1) + ": " +
+                        numbers.join(", ")
+                    );
+
+                } else {
+
+                    const numbers = generateSampleNumbers(6, 58);
+
+                    demoNumbers.push(
+                        "Board " + (i + 1) + ": " +
+                        numbers.join(", ")
+                    );
+                }
+
+            }
+
+            message.textContent =
+    `MPG USSD
+
+    SIMULATED QUICK PICK
+
+    Game: ${selectedGame}
+    Boards: ${selectedBoards}
+
+    ${demoNumbers.join("\n")}
+
+    Sample display only.
+    No real ticket has been created.`;
+
+            actionArea.innerHTML = "";
+
+            const reviewButton = document.createElement("button");
+            reviewButton.className = "demo-button";
+            reviewButton.textContent = "Review Selection";
+
+            reviewButton.onclick = function() {
+
+                message.textContent =
+    `MPG USSD
+
+    Demo selection review:
+
+    Game: ${selectedGame}
+    Boards: ${selectedBoards}
+
+    1. Confirm
+    2. Cancel`;
+
+                actionArea.innerHTML = "";
+
+                const confirmButton = document.createElement("button");
+                confirmButton.className = "demo-button";
+                confirmButton.textContent = "Confirm";
+                confirmButton.onclick = confirmDemo;
+
+                actionArea.appendChild(confirmButton);
+            };
+
+            actionArea.appendChild(reviewButton);
+        };
+
+        actionArea.appendChild(generateButton);
+    }
+
+    function confirmDemo() {
+
+        message.textContent =
+    `MPG USSD
+
+    Demo selection confirmed.
+
+    Game: ${selectedGame}
+    Boards: ${selectedBoards}
+
+    Your demonstration journey is complete.
+
+    DEMO ONLY
+
+    No real ticket has been purchased.
+    No payment has been processed.
+    No prize transaction has taken place.`;
+
+        const button = document.querySelector(".demo-button");
+
+        button.textContent = "Restart Demonstration";
+
+        button.onclick = restartDemo;
+    }
+
+
+    function restartDemo() {
+
+        message.textContent =
+    `Welcome to My Phanda Game
+
+    1. Lotto
+    2. PowerBall
+    3. Daily Lotto
+
+    Select an option to continue.`;
+
+        const button = document.querySelector(".demo-button");
+
+        button.textContent = "Start Demonstration";
+
+        button.onclick = startDemo;
+    }
+
+</script>
