@@ -472,8 +472,8 @@ Select an option to continue.
     let selectedGame = "";
     let selectedBoards = 0;
 
+    
     function startDemo() {
-
         message.textContent =
     `MPG USSD
 
@@ -483,103 +483,46 @@ Select an option to continue.
     2. PowerBall
     3. Daily Lotto`;
 
-        const button = document.querySelector(".demo-button");
-
-        button.textContent = "1. Lotto";
-        button.onclick = selectLotto;
-
-        const secondButton = document.createElement("button");
-
-        secondButton.className = "demo-button";
-        secondButton.textContent = "2. PowerBall";
-        secondButton.onclick = selectPowerBall;
-
-        const thirdButton = document.createElement("button");
-
-        thirdButton.className = "demo-button";
-        thirdButton.textContent = "3. Daily Lotto";
-        thirdButton.onclick = selectDailyLotto;
-
         const actionArea = document.getElementById("demoAction");
-
         actionArea.innerHTML = "";
-        actionArea.appendChild(button);
-        actionArea.appendChild(secondButton);
-        actionArea.appendChild(thirdButton);
+
+        const lottoButton = document.createElement("button");
+        lottoButton.className = "demo-button";
+        lottoButton.textContent = "1. Lotto";
+        lottoButton.onclick = selectLotto;
+
+        const powerBallButton = document.createElement("button");
+        powerBallButton.className = "demo-button";
+        powerBallButton.textContent = "2. PowerBall";
+        powerBallButton.onclick = selectPowerBall;
+
+        const dailyLottoButton = document.createElement("button");
+        dailyLottoButton.className = "demo-button";
+        dailyLottoButton.textContent = "3. Daily Lotto";
+        dailyLottoButton.onclick = selectDailyLotto;
+
+        actionArea.appendChild(lottoButton);
+        actionArea.appendChild(powerBallButton);
+        actionArea.appendChild(dailyLottoButton);
     }
 
-    
-
-    function selectPowerBall() {
-
+        function selectPowerBall() {
         selectedGame = "PowerBall";
-
-        message.textContent =
-    `MPG USSD
-
-    PowerBall selected.
-
-    Select number of boards:
-
-    1. One board
-    2. Two boards
-    3. Three boards`;
-
-        const button = document.querySelector(".demo-button");
-
-        button.textContent = "Select One Board";
-
-        button.onclick = selectOneBoard;
+        selectOneBoard();
     }
 
 
     function selectDailyLotto() {
-
         selectedGame = "Daily Lotto";
-
-        message.textContent =
-    `MPG USSD
-
-    Daily Lotto selected.
-
-    Select number of boards:
-
-    1. One board
-    2. Two boards
-    3. Three boards`;
-
-        const button = document.querySelector(".demo-button");
-
-        button.textContent = "Select One Board";
-
-        button.onclick = selectOneBoard;
+        selectOneBoard();
     }
 
 
     function selectLotto() {
-
         selectedGame = "Lotto";
-
-        message.textContent =
-    `MPG USSD
-
-    Lotto selected.
-
-    Select number of boards:
-
-    1. One board
-    2. Two boards
-    3. Three boards`;
-
-         const button = document.querySelector(".demo-button");
-
-        button.textContent = "Select One Board";
-
-        button.onclick = selectOneBoard;
+        selectOneBoard();
     }
 
-
-    
     function selectOneBoard() {
 
         message.textContent =
