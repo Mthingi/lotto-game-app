@@ -1,0 +1,630 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Phanda Game | Digital Lottery Distribution</title>
+
+    <meta name="description"
+          content="My Phanda Game is a South African technology initiative developing a USSD-based digital lottery distribution channel.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #172033;
+            background: #ffffff;
+        }
+
+        /* HEADER */
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e7ebf0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1120px;
+            margin: auto;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 23px;
+            font-weight: 700;
+            color: #0b1f3a;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #344054;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: #0b1f3a;
+        }
+
+        .admin-link {
+            border: 1px solid #cfd6df;
+            padding: 9px 15px;
+            border-radius: 6px;
+        }
+
+        /* HERO */
+
+        .hero {
+            background: #0b1f3a;
+            color: white;
+            padding: 95px 24px 100px;
+        }
+
+        .hero-inner {
+            max-width: 1120px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            line-height: 1.12;
+            margin: 0 0 24px;
+            max-width: 700px;
+        }
+
+        .hero p {
+            font-size: 19px;
+            line-height: 1.7;
+            color: #dbe5f0;
+            max-width: 650px;
+            margin-bottom: 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 13px 22px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .button-primary {
+            background: #ffffff;
+            color: #0b1f3a;
+        }
+
+        .button-secondary {
+            border: 1px solid #8394aa;
+            color: #ffffff;
+        }
+
+        .hero-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .hero-card h3 {
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .hero-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 0;
+            color: #dbe5f0;
+        }
+
+        /* GENERAL SECTIONS */
+
+        .section {
+            max-width: 1120px;
+            margin: auto;
+            padding: 80px 24px;
+        }
+
+        .section-heading {
+            max-width: 760px;
+            margin-bottom: 45px;
+        }
+
+        .section-heading h2 {
+            font-size: 32px;
+            margin: 0 0 16px;
+            color: #0b1f3a;
+        }
+
+        .section-heading p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #5b6472;
+            margin: 0;
+        }
+
+        /* HOW IT WORKS */
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .step {
+            border: 1px solid #e1e6ec;
+            border-radius: 10px;
+            padding: 28px;
+            background: #ffffff;
+        }
+
+        .step-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: #667085;
+            margin-bottom: 14px;
+        }
+
+        .step h3 {
+            margin: 0 0 12px;
+            font-size: 20px;
+        }
+
+        .step p {
+            margin: 0;
+            color: #5b6472;
+            line-height: 1.65;
+        }
+
+        /* WHY MPG */
+
+        .light-section {
+            background: #f5f7fa;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature h3 {
+            margin-bottom: 10px;
+            color: #0b1f3a;
+        }
+
+        .feature p {
+            margin: 0;
+            color: #5b6472;
+            line-height: 1.65;
+        }
+
+        /* PARTNERS */
+
+        .partner-box {
+            background: #0b1f3a;
+            color: white;
+            border-radius: 12px;
+            padding: 50px;
+        }
+
+        .partner-box h2 {
+            margin-top: 0;
+            font-size: 30px;
+        }
+
+        .partner-box p {
+            max-width: 800px;
+            line-height: 1.7;
+            color: #dbe5f0;
+        }
+
+        /* CONTACT */
+
+        .contact {
+            text-align: center;
+        }
+
+        .contact p {
+            color: #5b6472;
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #07172b;
+            color: #b9c5d4;
+            padding: 28px 24px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .nav {
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 70px 24px;
+            }
+
+            .hero-inner {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .steps,
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .partner-box {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <nav class="nav">
+
+        <a href="#" class="brand">
+            My Phanda Game
+        </a>
+
+        <div class="nav-links">
+
+            <a href="#how-it-works">
+                How It Works
+            </a>
+
+            <a href="#why-mpg">
+                Why MPG
+            </a>
+
+            <a href="#partners">
+                Partnerships
+            </a>
+
+            <a href="#contact">
+                Contact
+            </a>
+
+            <a href="/login" class="admin-link">
+                Admin Login
+            </a>
+
+        </div>
+
+    </nav>
+
+</header>
+
+
+<section class="hero">
+
+    <div class="hero-inner">
+
+        <div>
+
+            <h1>
+                Expanding digital access through USSD
+            </h1>
+
+            <p>
+                My Phanda Game (MPG) is a South African technology
+                initiative developing a USSD-based digital lottery
+                distribution channel designed to provide a simple
+                mobile access point for lottery services.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="/demo" class="button button-primary">
+                    Explore the MPG Journey
+                </a>
+
+                <a href="#partners" class="button button-secondary">
+                    Partnership Opportunities
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-card">
+
+            <h3>
+                Built for accessible mobile distribution
+            </h3>
+
+            <p>
+                MPG is being developed around USSD technology,
+                enabling a mobile-first customer experience without
+                requiring a smartphone application or high-data
+                connection.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="section" id="how-it-works">
+
+    <div class="section-heading">
+
+        <h2>
+            How MPG works
+        </h2>
+
+        <p>
+            MPG is being developed as a technology distribution
+            channel connecting the customer journey with the
+            appropriate telecommunications and licensed lottery
+            operator infrastructure.
+        </p>
+
+    </div>
+
+
+    <div class="steps">
+
+        <div class="step">
+
+            <div class="step-number">
+                01
+            </div>
+
+            <h3>
+                Customer
+            </h3>
+
+            <p>
+                A customer accesses the service through a mobile
+                USSD channel.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                02
+            </div>
+
+            <h3>
+                MPG Platform
+            </h3>
+
+            <p>
+                MPG manages the digital customer journey and
+                ticketing workflow through its technology platform.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="step-number">
+                03
+            </div>
+
+            <h3>
+                Licensed Operator
+            </h3>
+
+            <p>
+                The platform is being developed towards integration
+                with the appropriate licensed lottery operator and
+                telecommunications partners.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="light-section" id="why-mpg">
+
+    <div class="section">
+
+        <div class="section-heading">
+
+            <h2>
+                Why MPG
+            </h2>
+
+            <p>
+                MPG focuses on creating a simple digital distribution
+                layer around technology that is already widely
+                accessible through mobile networks.
+            </p>
+
+        </div>
+
+
+        <div class="features">
+
+            <div class="feature">
+
+                <h3>
+                    USSD-first
+                </h3>
+
+                <p>
+                    Designed around USSD to support mobile access
+                    without depending on a smartphone application.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <h3>
+                    Digital distribution
+                </h3>
+
+                <p>
+                    A technology channel designed to support the
+                    digital distribution of lottery services.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <h3>
+                    Partnership driven
+                </h3>
+
+                <p>
+                    MPG is being developed with the appropriate
+                    telecommunications, technology and licensed
+                    lottery partnerships in mind.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="section" id="partners">
+
+    <div class="partner-box">
+
+        <h2>
+            Partnership Opportunities
+        </h2>
+
+        <p>
+            MPG is currently exploring opportunities with
+            telecommunications operators, technology companies,
+            VAS providers and licensed lottery operators.
+        </p>
+
+        <p>
+            The objective is to establish the appropriate commercial,
+            technical and operational partnerships required to
+            progress the platform towards production integration.
+        </p>
+
+        <a href="#contact" class="button button-primary">
+            Contact MPG
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="section contact" id="contact">
+
+    <div class="section-heading" style="margin-left:auto;margin-right:auto;">
+
+        <h2>
+            Connect with MPG
+        </h2>
+
+        <p>
+            My Phanda Game (Pty) Ltd<br>
+            South Africa
+        </p>
+
+        <p>
+            For partnership, technology or business enquiries,
+            please contact the MPG team.
+        </p>
+
+        <p style="margin-top: 24px;">
+            <strong>Email:</strong>
+            <a href="mailto:luyanda@myphandagame.co.za">
+                luyanda@myphandagame.co.za
+            </a>
+        </p>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    © 2026 My Phanda Game (Pty) Ltd.
+    All rights reserved.
+    &nbsp; | &nbsp;
+    <a href="/login">Admin Login</a>
+
+</footer>
+
+</body>
+</html>
+```
